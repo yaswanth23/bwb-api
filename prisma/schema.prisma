@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model bookingCaptureStates {
+  bookingid String    @db.VarChar(100)
+  stateid   Int
+  createdby String?   @db.VarChar(255)
+  isactive  Boolean?
+  createdat DateTime? @db.Timestamp(6)
+  updatedat DateTime? @db.Timestamp(6)
+
+  @@id([bookingid, stateid])
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model bookingStateTransition {
+  fromstateid      Int?
+  tostateid        Int?
+  triggercondition String?   @db.VarChar(255)
+  isactive         Boolean?
+  createdat        DateTime? @db.Timestamp(6)
+  updatedat        DateTime? @db.Timestamp(6)
+
+  @@ignore
+}
+
+model bookingStates {
+  stateid     Int       @id(map: "bookingstates_pkey") @default(autoincrement())
+  statename   String    @db.VarChar(255)
+  userroleids Int[]
+  isactive    Boolean
+  createdat   DateTime? @default(now()) @db.Timestamp(6)
+  updatedat   DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model diagnosticsTestAttributes {
+  attributeid   Int       @id(map: "diagnosticstestattributes_pkey") @default(autoincrement())
+  attributename String    @db.VarChar
+  attributetype String    @db.VarChar
+  isactive      Boolean?  @default(true)
+  createdat     DateTime? @default(now()) @db.Timestamp(6)
+  updatedat     DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model diagnosticsTestAttributesStore {
+  id             Int       @id(map: "diagnosticstestattributesstore_pkey") @default(autoincrement())
+  partnerid      Int
+  testid         String    @db.VarChar
+  attributeid    Int
+  attributevalue String    @db.VarChar
+  isactive       Boolean?  @default(true)
+  createdat      DateTime? @default(now()) @db.Timestamp(6)
+  updatedat      DateTime? @default(now()) @db.Timestamp(6)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model labLocations {
+  labid          BigInt    @id @default(autoincrement())
+  labname        String?   @db.VarChar(255)
+  labaddress     String?   @db.VarChar
+  pincode        Int?
+  pointofcontact String?   @db.VarChar(50)
+  phonenumber    String?   @db.VarChar
+  labtimings     String?   @db.VarChar(50)
+  isactive       Boolean?  @default(true)
+  createdat      DateTime? @default(now()) @db.Timestamp(6)
+  updatedat      DateTime? @default(now()) @db.Timestamp(6)
+  city           String?   @db.VarChar
+  partnerid      Int?
+  latitude       Float?
+  longitude      Float?
+}
+
+model partnerDetails {
+  partnerid   Int       @id(map: "partnerdetails_pkey") @default(autoincrement())
+  partnername String    @db.VarChar(255)
+  isactive    Boolean?  @default(true)
+  createdat   DateTime? @default(now()) @db.Timestamp(6)
+  updatedat   DateTime? @default(now()) @db.Timestamp(6)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model serviceablePincodes {
+  id        Int       @id @default(autoincrement())
+  city      String?   @db.VarChar(255)
+  state     String?   @db.VarChar(255)
+  pincode   Int?
+  isactive  Boolean?  @default(true)
+  createdat DateTime? @default(now()) @db.Timestamp(6)
+  updatedat DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model waitlist {
+  id           BigInt    @id @default(autoincrement())
+  emailid      String?   @db.VarChar(50)
+  createdon    DateTime? @db.Timestamp(6)
+  revisitcount Int?
+}
