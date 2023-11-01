@@ -26,6 +26,6 @@ async function bootstrap() {
   }
   app.useGlobalPipes(new ValidationPipe(), new BigIntSerializerPipe());
   app.useGlobalInterceptors(new BigIntInterceptor());
-  await app.listen(9100);
+  await app.listen(9000);
 }
 bootstrap();
