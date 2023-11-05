@@ -1,6 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ContactUsInputDto } from '../../models/dto/misc/misc.dto';
+const nodemailer = require('nodemailer');
 
 @Injectable()
 export class MiscService {
@@ -35,6 +36,38 @@ export class MiscService {
           createdat: new Date().toISOString(),
         },
       });
+
+      let transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.MAILER_ID,
+          pass: process.env.MAILER_PASSWORD,
+        },
+      });
+
+      const mailOptions = {
+        from: 'yaswanth.k23@gmail.com',
+        to: contactUsInputDto.emailId,
+        subject: 'Thank you for Contacting us',
+        text:
+          'Hi ' +
+          contactUsInputDto.fullname +
+          ', Our team will contact you shortly over the provided Mobile Number: ' +
+          contactUsInputDto.mobileNumber +
+          '. Thanks & Reagards',
+      };
+
+      const notifyMailOPtions = {
+        from: 'yaswanth.k23@gmail.com',
+        to: 'yaswanth.k23@gmail.com',
+        subject: contactUsInputDto.fullname + ' contacting us',
+        text: 'Hey LGTM!😊, ' + contactUsInputDto.emailId + ' has contacted us',
+      };
+
+      transporter.sendMail(mailOptions);
+      transporter.sendMail(notifyMailOPtions);
     }
     return { data: { statusCode: 200, message: 'success' } };
   }
