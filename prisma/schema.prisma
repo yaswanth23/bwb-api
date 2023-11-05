@@ -102,3 +102,13 @@ model waitlist {
   createdon    DateTime? @db.Timestamp(6)
   revisitcount Int?
 }
+
+model contactrequests {
+  id               Int      @id @default(autoincrement())
+  fullname         String   @db.VarChar(255)
+  emailid          String   @db.VarChar(255)
+  mobilenumber     String   @db.VarChar(15)
+  organisationname String?  @db.VarChar(255)
+  counter          Int?
+  createdat        DateTime @db.Timestamptz(6)
+}
