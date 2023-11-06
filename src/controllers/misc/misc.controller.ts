@@ -1,5 +1,5 @@
-import { Body, Controller, Post, Get, Query, Param } from '@nestjs/common';
-import { ApiTags, ApiQuery } from '@nestjs/swagger';
+import { Body, Controller, Post, Get, Param } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { MiscService } from '../../services/misc/misc.service';
 import {
   ContactUsInputDto,

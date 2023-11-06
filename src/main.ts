@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { BigIntSerializerPipe } from './common/pipes/bigIntSerializer.pipe';
 import { BigIntInterceptor } from './common/interceptors/bigInt.interceptor';
 import { MiscModule } from './modules/misc/misc.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,7 +19,7 @@ async function bootstrap() {
       .addTag('BWB Code System')
       .build();
     const document = SwaggerModule.createDocument(app, config, {
-      include: [MiscModule],
+      include: [MiscModule, AuthModule],
       deepScanRoutes: true,
       operationIdFactory: (controllerKey: string, methodKey: string) =>
         methodKey,

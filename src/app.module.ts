@@ -7,6 +7,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
 import { LoggingInterceptor } from './middleware/logging.interceptor';
 import { JsonHeaderInterceptor } from './middleware/jsonHeader.interceptor';
 import { MiscModule } from './modules/misc/misc.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { MiscModule } from './modules/misc/misc.module';
     }),
     PrismaModule,
     MiscModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
