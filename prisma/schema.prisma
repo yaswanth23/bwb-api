@@ -112,3 +112,14 @@ model contactrequests {
   counter          Int?
   createdat        DateTime @db.Timestamptz(6)
 }
+
+model signuprequests {
+  id        BigInt    @id @default(autoincrement())
+  emailid   String?
+  deadline  DateTime? @db.Timestamptz(6)
+  mobile    BigInt?
+  uniquekey String?
+  isused    Boolean?
+  createdat DateTime? @db.Timestamptz(6)
+  updatedat DateTime? @db.Timestamptz(6)
+}

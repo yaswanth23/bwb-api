@@ -32,3 +32,15 @@ export class ContactUsInputDto {
   @ApiProperty()
   mobileNumber: number;
 }
+
+export class GenerateRegisterUrlDto {
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  emailId: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  mobileNumber: number;
+}

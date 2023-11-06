@@ -1,6 +1,10 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../prisma/prisma.service';
-import { ContactUsInputDto } from '../../models/dto/misc/misc.dto';
+import {
+  ContactUsInputDto,
+  GenerateRegisterUrlDto,
+} from '../../models/dto/misc/misc.dto';
 const nodemailer = require('nodemailer');
 
 @Injectable()
@@ -70,5 +74,94 @@ export class MiscService {
       transporter.sendMail(notifyMailOPtions);
     }
     return { data: { statusCode: 200, message: 'success' } };
+  }
+
+  async generateRegistrationUrl(
+    generateRegisterUrlDto: GenerateRegisterUrlDto,
+  ) {
+    const signUpRequestsData =
+      await this.prismaService.signuprequests.findFirst({
+        where: {
+          emailid: generateRegisterUrlDto.emailId,
+          mobile: generateRegisterUrlDto.mobileNumber,
+          isused: true,
+        },
+      });
+
+    if (signUpRequestsData) {
+      throw new HttpException(
+        'Email Id already exists in the system',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const uniqueKey = this.generateUUID();
+    const deadlineTime = new Date(new Date().getTime() + 48 * 60 * 60 * 1000);
+
+    await this.prismaService.signuprequests.create({
+      data: {
+        emailid: generateRegisterUrlDto.emailId,
+        deadline: deadlineTime,
+        mobile: generateRegisterUrlDto.mobileNumber,
+        uniquekey: uniqueKey,
+        isused: false,
+        createdat: new Date().toISOString(),
+        updatedat: new Date().toISOString(),
+      },
+    });
+
+    const generatedUrl = 'https://app-bwb.netlify.app/signup?key=' + uniqueKey;
+
+    let transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.MAILER_ID,
+        pass: process.env.MAILER_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: 'yaswanth.k23@gmail.com',
+      to: generateRegisterUrlDto.emailId,
+      subject: 'Welcome to Our Service - Complete Your Registration',
+      text: `Hello,
+    
+    Thank you for contacting us! We're excited to have you on board. To complete your registration, please use the following URL. This URL will expire after 48 hours.
+    
+    Registration URL: ${generatedUrl}
+    
+    If you have any questions or need assistance, feel free to reach out to our support team.
+    
+    Best regards,
+    BWB`,
+    };
+
+    transporter.sendMail(mailOptions);
+
+    return {
+      data: { statusCode: 200, message: 'success', generatedUrl: generatedUrl },
+    };
+  }
+
+  generateUUID(): string {
+    return uuidv4();
+  }
+
+  async verifyKey(uniqueKey: string) {
+    const data = await this.prismaService.signuprequests.findFirst({
+      where: {
+        uniquekey: uniqueKey,
+      },
+    });
+
+    if (!data) {
+      throw new HttpException('UniqueKey not found', HttpStatus.NOT_FOUND);
+    }
+
+    return {
+      data: { statusCode: 200, message: 'success' },
+    };
   }
 }
