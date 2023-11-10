@@ -37,3 +37,15 @@ export class SignUpDto {
   @ApiProperty()
   password: string;
 }
+
+export class LoginDto {
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  userIdentifier: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  password: string;
+}

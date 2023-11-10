@@ -6,9 +6,9 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { SignUpDto } from '../../models/dto/auth/auth.dto';
-import { IdGeneratorService } from '../idGenerator/idgenerator.service';
 import { genSaltSync, hashSync } from 'bcrypt';
+import { SignUpDto, LoginDto } from '../../models/dto/auth/auth.dto';
+import { IdGeneratorService } from '../idGenerator/idgenerator.service';
 
 @Injectable()
 export class AuthService {
@@ -107,6 +107,47 @@ export class AuthService {
 
     return {
       data: { statusCode: 200, userId: userId },
+    };
+  }
+
+  async login(loginDto: LoginDto) {
+    const userData = await this.prismaService.userDetails.findFirst({
+      where: {
+        OR: [
+          { mobilenumber: loginDto.userIdentifier },
+          { emailid: loginDto.userIdentifier },
+        ],
+      },
+      include: {
+        userAuthPassDetails: true,
+      },
+    });
+
+    if (!userData) {
+      throw new HttpException('Account not found', HttpStatus.UNAUTHORIZED);
+    }
+
+    const hashedPassword = hashSync(
+      loginDto.password,
+      userData.userAuthPassDetails.saltkey,
+    );
+
+    if (hashedPassword !== userData.userAuthPassDetails.hashedkey) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
+
+    return {
+      data: {
+        statusCode: 200,
+        userDetails: {
+          userId: userData.userid,
+          fullName: userData.fullname,
+          organisationName: userData.organisationname,
+          roleId: userData.roleid,
+          emailId: userData.emailid,
+          mobileNumber: userData.mobilenumber,
+        },
+      },
     };
   }
 }
