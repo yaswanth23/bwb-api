@@ -82,8 +82,10 @@ export class MiscService {
     const signUpRequestsData =
       await this.prismaService.signupRequests.findFirst({
         where: {
-          emailid: generateRegisterUrlDto.emailId,
-          mobile: generateRegisterUrlDto.mobileNumber,
+          OR: [
+            { emailid: generateRegisterUrlDto.emailId },
+            { mobile: generateRegisterUrlDto.mobileNumber },
+          ],
           isused: true,
         },
       });
