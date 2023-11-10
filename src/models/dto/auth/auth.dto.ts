@@ -23,9 +23,14 @@ export class SignUpDto {
   emailId: string;
 
   @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  mobileNumber: string;
+
+  @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
-  mobileNumber: number;
+  roleId: number;
 
   @IsNotEmpty()
   @IsString()

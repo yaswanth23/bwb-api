@@ -113,8 +113,8 @@ model contactrequests {
   createdat        DateTime @db.Timestamptz(6)
 }
 
-model signuprequests {
-  id        BigInt    @id @default(autoincrement())
+model signupRequests {
+  id        BigInt    @id(map: "signuprequests_pkey") @default(autoincrement())
   emailid   String?
   deadline  DateTime? @db.Timestamptz(6)
   mobile    BigInt?
@@ -122,4 +122,26 @@ model signuprequests {
   isused    Boolean?
   createdat DateTime? @db.Timestamptz(6)
   updatedat DateTime? @db.Timestamptz(6)
+}
+
+model userAuthPassDetails {
+  userid      BigInt      @id(map: "userauthpassdetails_pkey")
+  hashedkey   String      @db.VarChar
+  saltkey     String      @db.VarChar
+  createdat   DateTime?   @db.Timestamp(6)
+  updatedat   DateTime?   @db.Timestamp(6)
+  userDetails userDetails @relation(fields: [userid], references: [userid], onDelete: Cascade, onUpdate: NoAction, map: "userauthpassdetails_userid_fkey")
+}
+
+model userDetails {
+  userid              BigInt               @id(map: "userdetails_pkey")
+  fullname            String               @db.VarChar
+  organisationname    String               @db.VarChar
+  emailid             String               @db.VarChar
+  mobilenumber        String               @db.VarChar
+  roleid              Int
+  token               String?              @db.VarChar
+  createdat           DateTime?            @db.Timestamp(6)
+  updatedat           DateTime?            @db.Timestamp(6)
+  userAuthPassDetails userAuthPassDetails?
 }

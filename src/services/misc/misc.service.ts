@@ -80,7 +80,7 @@ export class MiscService {
     generateRegisterUrlDto: GenerateRegisterUrlDto,
   ) {
     const signUpRequestsData =
-      await this.prismaService.signuprequests.findFirst({
+      await this.prismaService.signupRequests.findFirst({
         where: {
           emailid: generateRegisterUrlDto.emailId,
           mobile: generateRegisterUrlDto.mobileNumber,
@@ -98,7 +98,7 @@ export class MiscService {
     const uniqueKey = this.generateUUID();
     const deadlineTime = new Date(new Date().getTime() + 48 * 60 * 60 * 1000);
 
-    await this.prismaService.signuprequests.create({
+    await this.prismaService.signupRequests.create({
       data: {
         emailid: generateRegisterUrlDto.emailId,
         deadline: deadlineTime,
@@ -150,7 +150,7 @@ export class MiscService {
   }
 
   async verifyKey(uniqueKey: string) {
-    const data = await this.prismaService.signuprequests.findFirst({
+    const data = await this.prismaService.signupRequests.findFirst({
       where: {
         uniquekey: uniqueKey,
       },
