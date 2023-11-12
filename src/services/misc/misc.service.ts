@@ -1,4 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+} from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../prisma/prisma.service';
 import {
@@ -160,6 +165,16 @@ export class MiscService {
 
     if (!data) {
       throw new HttpException('UniqueKey not found', HttpStatus.NOT_FOUND);
+    }
+
+    const currentDateTime = new Date();
+    const deadlineDateTime = new Date(data.deadline);
+
+    if (deadlineDateTime < currentDateTime) {
+      throw new BadRequestException(
+        'Signup request has expired',
+        'SIGNUP_EXPIRED',
+      );
     }
 
     return {
