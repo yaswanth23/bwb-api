@@ -5,12 +5,12 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+const nodemailer = require('nodemailer');
 import { PrismaService } from '../prisma/prisma.service';
 import {
   ContactUsInputDto,
   GenerateRegisterUrlDto,
 } from '../../models/dto/misc/misc.dto';
-const nodemailer = require('nodemailer');
 
 @Injectable()
 export class MiscService {

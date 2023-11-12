@@ -5,8 +5,9 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+const nodemailer = require('nodemailer');
 import { genSaltSync, hashSync } from 'bcrypt';
+import { PrismaService } from '../prisma/prisma.service';
 import { SignUpDto, LoginDto } from '../../models/dto/auth/auth.dto';
 import { IdGeneratorService } from '../idGenerator/idgenerator.service';
 
@@ -104,6 +105,35 @@ export class AuthService {
         updatedat: new Date().toISOString(),
       },
     });
+
+    let transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.MAILER_ID,
+        pass: process.env.MAILER_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: 'yaswanth.k23@gmail.com',
+      to: signUpDto.emailId,
+      subject: 'Congratulations! Your Registration is Complete',
+      html: `
+        <p>Hello ${signUpDto.fullName},</p>
+        
+        <p>Congratulations! Your registration is complete, and you can now log in to our service using your credentials. Thank you for choosing our service.</p>
+        
+        <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>
+        
+        <p>Best regards,<br/>BWB</p>
+        
+        <p>Visit our website: <a href="https://app-bwb.netlify.app/">https://app-bwb.netlify.app/</a></p>
+      `,
+    };
+
+    transporter.sendMail(mailOptions);
 
     return {
       data: { statusCode: 200, userId: userId },
