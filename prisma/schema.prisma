@@ -31,7 +31,7 @@ model bookingStateTransition {
 }
 
 model bookingStates {
-  stateid     Int       @id(map: "bookingstates_pkey") @default(autoincrement())
+  stateid     Int       @id @default(autoincrement())
   statename   String    @db.VarChar(255)
   userroleids Int[]
   isactive    Boolean
@@ -40,7 +40,7 @@ model bookingStates {
 }
 
 model diagnosticsTestAttributes {
-  attributeid   Int       @id(map: "diagnosticstestattributes_pkey") @default(autoincrement())
+  attributeid   Int       @id @default(autoincrement())
   attributename String    @db.VarChar
   attributetype String    @db.VarChar
   isactive      Boolean?  @default(true)
@@ -49,7 +49,7 @@ model diagnosticsTestAttributes {
 }
 
 model diagnosticsTestAttributesStore {
-  id             Int       @id(map: "diagnosticstestattributesstore_pkey") @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   partnerid      Int
   testid         String    @db.VarChar
   attributeid    Int
@@ -78,7 +78,7 @@ model labLocations {
 }
 
 model partnerDetails {
-  partnerid   Int       @id(map: "partnerdetails_pkey") @default(autoincrement())
+  partnerid   Int       @id @default(autoincrement())
   partnername String    @db.VarChar(255)
   isactive    Boolean?  @default(true)
   createdat   DateTime? @default(now()) @db.Timestamp(6)
@@ -96,13 +96,6 @@ model serviceablePincodes {
   updatedat DateTime? @default(now()) @db.Timestamp(6)
 }
 
-model waitlist {
-  id           BigInt    @id @default(autoincrement())
-  emailid      String?   @db.VarChar(50)
-  createdon    DateTime? @db.Timestamp(6)
-  revisitcount Int?
-}
-
 model contactrequests {
   id               Int      @id @default(autoincrement())
   fullname         String   @db.VarChar(255)
@@ -114,7 +107,7 @@ model contactrequests {
 }
 
 model signupRequests {
-  id        BigInt    @id(map: "signuprequests_pkey") @default(autoincrement())
+  id        BigInt    @id @default(autoincrement())
   emailid   String?
   deadline  DateTime? @db.Timestamptz(6)
   mobile    BigInt?
@@ -125,7 +118,7 @@ model signupRequests {
 }
 
 model userAuthPassDetails {
-  userid      BigInt      @id(map: "userauthpassdetails_pkey")
+  userid      BigInt      @id
   hashedkey   String      @db.VarChar
   saltkey     String      @db.VarChar
   createdat   DateTime?   @db.Timestamp(6)
@@ -134,7 +127,7 @@ model userAuthPassDetails {
 }
 
 model userDetails {
-  userid              BigInt               @id(map: "userdetails_pkey")
+  userid              BigInt               @id
   fullname            String               @db.VarChar
   organisationname    String               @db.VarChar
   emailid             String               @db.VarChar
