@@ -138,3 +138,13 @@ model userDetails {
   updatedat           DateTime?            @db.Timestamp(6)
   userAuthPassDetails userAuthPassDetails?
 }
+
+model userTermsConditions {
+  termsconditionsid      BigInt    @id
+  userid                 BigInt?
+  termsandconditionstext String?
+  createdat              DateTime? @db.Timestamp(6)
+  createdby              BigInt?
+  updatedat              DateTime? @db.Timestamp(6)
+  updatedby              BigInt?
+}
