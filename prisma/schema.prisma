@@ -147,4 +147,5 @@ model userTermsConditions {
   createdby              BigInt?
   updatedat              DateTime? @db.Timestamp(6)
   updatedby              BigInt?
+  isactive               Boolean?
 }

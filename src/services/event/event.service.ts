@@ -25,6 +25,7 @@ export class EventService {
       data: {
         termsconditionsid: termsId,
         userid: addTNCDto.userId,
+        isactive: true,
         termsandconditionstext: addTNCDto.termsAndCondition,
         createdat: new Date().toISOString(),
         createdby: addTNCDto.userId,
@@ -34,6 +35,7 @@ export class EventService {
     const allTerms = await this.prismaService.userTermsConditions.findMany({
       where: {
         userid: addTNCDto.userId,
+        isactive: true,
       },
     });
 
@@ -58,6 +60,7 @@ export class EventService {
     const allTerms = await this.prismaService.userTermsConditions.findMany({
       where: {
         userid: BigInt(userId),
+        isactive: true,
       },
     });
 
@@ -79,15 +82,21 @@ export class EventService {
       throw new HttpException('Account not found', HttpStatus.UNAUTHORIZED);
     }
 
-    await this.prismaService.userTermsConditions.delete({
+    await this.prismaService.userTermsConditions.update({
       where: {
         termsconditionsid: BigInt(params.termsConditionsId),
+      },
+      data: {
+        isactive: false,
+        updatedat: new Date().toISOString(),
+        updatedby: params.userId,
       },
     });
 
     const allTerms = await this.prismaService.userTermsConditions.findMany({
       where: {
         userid: BigInt(params.userId),
+        isactive: true,
       },
     });
 
