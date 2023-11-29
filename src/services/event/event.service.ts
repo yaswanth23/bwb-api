@@ -168,7 +168,7 @@ export class EventService {
         {
           eventid: eventId,
           key: 'AWARD_TYPE',
-          value: '1',
+          value: eventScheduleDto.awardType.toString(),
           createdby: eventScheduleDto.userId,
           createdat: new Date().toISOString(),
         },
