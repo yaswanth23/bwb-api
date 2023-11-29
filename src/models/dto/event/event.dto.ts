@@ -21,3 +21,23 @@ export class DeleteTNCDto {
   @IsNumberString()
   termsConditionsId: number;
 }
+
+export class ProductDetailsDto {
+  product: string;
+  productVariant: string;
+  quantity: number;
+  deliveryLocation: string;
+}
+
+export class EventScheduleDto {
+  userId: bigint;
+  eventTitle: string;
+  awardType: number;
+  deliveryDate: Date;
+  productDetails: ProductDetailsDto[];
+  termsAndConditionsIds: bigint[];
+  eventScheduleOption: string;
+  eventStartTime: Date;
+  eventDurationOption: string;
+  eventDuration: string;
+}

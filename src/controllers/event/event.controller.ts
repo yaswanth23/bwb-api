@@ -9,7 +9,11 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiQuery } from '@nestjs/swagger';
 import { EventService } from '../../services/event/event.service';
-import { AddTNCDto, DeleteTNCDto } from '../../models/dto/event/event.dto';
+import {
+  AddTNCDto,
+  DeleteTNCDto,
+  EventScheduleDto,
+} from '../../models/dto/event/event.dto';
 
 @ApiTags('Event APIs')
 @Controller('event')
@@ -31,5 +35,10 @@ export class EventController {
   @ApiQuery({ name: 'userId', type: Number, required: true })
   async deleteTermsAndConditions(@Query() params: DeleteTNCDto) {
     return await this.eventService.deleteTermsAndConditions(params);
+  }
+
+  @Post('schedule')
+  async scheduleEvent(@Body() eventScheduleDto: EventScheduleDto) {
+    return await this.eventService.scheduleEvent(eventScheduleDto);
   }
 }

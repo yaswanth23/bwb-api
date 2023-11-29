@@ -149,3 +149,31 @@ model userTermsConditions {
   updatedby              BigInt?
   isactive               Boolean?
 }
+
+model eventAttributesStore {
+  eventid      BigInt
+  key          String       @db.VarChar(255)
+  value        String?
+  createdby    BigInt?
+  createdat    DateTime?    @db.Timestamp(6)
+  updatedby    BigInt?
+  updatedat    DateTime?    @db.Timestamp(6)
+  eventDetails eventDetails @relation(fields: [eventid], references: [eventid], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([eventid, key])
+}
+
+model eventDetails {
+  eventid              BigInt                 @id(map: "eventdetails_pkey")
+  eventname            String?                @db.VarChar(255)
+  userid               BigInt?
+  eventstatus          String?                @db.VarChar(255)
+  eventstarttime       DateTime?              @db.Timestamp(6)
+  eventduration        Int?
+  deliverydate         DateTime?              @db.Timestamp(6)
+  createdby            BigInt?
+  createdat            DateTime?              @db.Timestamp(6)
+  updatedby            BigInt?
+  updatedat            DateTime?              @db.Timestamp(6)
+  eventAttributesStore eventAttributesStore[]
+}
