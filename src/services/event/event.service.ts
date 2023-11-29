@@ -4,6 +4,7 @@ import {
   AddTNCDto,
   DeleteTNCDto,
   EventScheduleDto,
+  GetEventsDto,
 } from '../../models/dto/event/event.dto';
 import { IdGeneratorService } from '../idGenerator/idgenerator.service';
 
@@ -194,6 +195,28 @@ export class EventService {
         statusCode: 200,
         message: 'success',
         eventId: eventId,
+      },
+    };
+  }
+
+  async getEvents(params: GetEventsDto) {
+    const page: number = params.page || 1;
+    const limit: number = params.limit || 10;
+    const offset: number = (page - 1) * limit;
+
+    const data = await this.prismaService.eventDetails.findMany({
+      where: {
+        userid: params.userId,
+        eventstatus: params.status,
+      },
+      take: Number(limit),
+      skip: offset,
+    });
+
+    return {
+      data: {
+        statusCode: 200,
+        events: data,
       },
     };
   }

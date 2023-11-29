@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsNumberString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumberString,
+  IsNumber,
+  IsOptional,
+  IsIn,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class AddTNCDto {
   @ApiProperty()
@@ -40,4 +48,26 @@ export class EventScheduleDto {
   eventStartTime: Date;
   eventDurationOption: string;
   eventDuration: string;
+}
+
+export class GetEventsDto {
+  @IsNumber()
+  @Type(() => Number)
+  userId: number;
+
+  @IsString()
+  @IsIn(['LIVE', 'UPCOMING', 'CLOSED'], {
+    message: 'Status must be LIVE or UPCOMING orCLOSED',
+  })
+  status: string;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  page: number = 1;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  limit: number = 10;
 }

@@ -13,6 +13,7 @@ import {
   AddTNCDto,
   DeleteTNCDto,
   EventScheduleDto,
+  GetEventsDto,
 } from '../../models/dto/event/event.dto';
 
 @ApiTags('Event APIs')
@@ -40,5 +41,14 @@ export class EventController {
   @Post('schedule')
   async scheduleEvent(@Body() eventScheduleDto: EventScheduleDto) {
     return await this.eventService.scheduleEvent(eventScheduleDto);
+  }
+
+  @Get()
+  @ApiQuery({ name: 'limit', type: Number, required: false })
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'status', enum: ['LIVE', 'UPCOMING', 'CLOSED'] })
+  @ApiQuery({ name: 'userId', type: Number, required: true })
+  async getEvents(@Query() params: GetEventsDto) {
+    return await this.eventService.getEvents(params);
   }
 }
