@@ -51,4 +51,9 @@ export class EventController {
   async getEvents(@Query() params: GetEventsDto) {
     return await this.eventService.getEvents(params);
   }
+
+  @Get('count/:userId')
+  async getEventsCount(@Param('userId') userId: string) {
+    return await this.eventService.getEventsCount(userId);
+  }
 }
