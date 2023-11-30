@@ -209,6 +209,13 @@ export class EventService {
         userid: params.userId,
         eventstatus: params.status,
       },
+      include: {
+        eventAttributesStore: {
+          where: {
+            key: 'PRODUCT_DETAILS',
+          },
+        },
+      },
       take: Number(limit),
       skip: offset,
     });
