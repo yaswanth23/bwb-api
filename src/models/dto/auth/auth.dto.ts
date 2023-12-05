@@ -40,6 +40,11 @@ export class SignUpDto {
 
 export class LoginDto {
   @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  appId: number;
+
+  @IsNotEmpty()
   @IsString()
   @ApiProperty()
   userIdentifier: string;

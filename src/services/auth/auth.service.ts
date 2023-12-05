@@ -147,6 +147,7 @@ export class AuthService {
           { mobilenumber: loginDto.userIdentifier },
           { emailid: loginDto.userIdentifier },
         ],
+        roleid: loginDto.appId,
       },
       include: {
         userAuthPassDetails: true,
