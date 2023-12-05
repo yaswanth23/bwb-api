@@ -8,7 +8,11 @@ import {
 const nodemailer = require('nodemailer');
 import { genSaltSync, hashSync } from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
-import { SignUpDto, LoginDto } from '../../models/dto/auth/auth.dto';
+import {
+  SignUpDto,
+  LoginDto,
+  VendorSignUpDto,
+} from '../../models/dto/auth/auth.dto';
 import { IdGeneratorService } from '../idGenerator/idgenerator.service';
 
 @Injectable()
@@ -179,6 +183,94 @@ export class AuthService {
           mobileNumber: userData.mobilenumber,
         },
       },
+    };
+  }
+
+  async vendorSignUp(vendorSignUpDto: VendorSignUpDto) {
+    const userExists = await this.prismaService.userDetails.findFirst({
+      where: {
+        OR: [
+          { mobilenumber: vendorSignUpDto.mobileNumber },
+          { emailid: vendorSignUpDto.emailId },
+        ],
+      },
+    });
+
+    if (userExists) {
+      if (userExists.mobilenumber === vendorSignUpDto.mobileNumber) {
+        throw new HttpException(
+          'Mobile Number already exists.',
+          HttpStatus.BAD_REQUEST,
+        );
+      } else {
+        throw new HttpException(
+          'Email Id already exists.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+
+    const userId = this.idGeneratorService.generateId();
+
+    const saltRounds = 10;
+    const saltKey = genSaltSync(saltRounds);
+    const hashedKey = hashSync(vendorSignUpDto.password, saltKey);
+
+    await this.prismaService.userDetails.create({
+      data: {
+        userid: userId,
+        fullname: vendorSignUpDto.fullName,
+        organisationname: vendorSignUpDto.organisationName,
+        emailid: vendorSignUpDto.emailId,
+        mobilenumber: vendorSignUpDto.mobileNumber,
+        roleid: vendorSignUpDto.roleId,
+        token: null,
+        createdat: new Date().toISOString(),
+        updatedat: new Date().toISOString(),
+      },
+    });
+
+    await this.prismaService.userAuthPassDetails.create({
+      data: {
+        userid: userId,
+        hashedkey: hashedKey,
+        saltkey: saltKey,
+        createdat: new Date().toISOString(),
+        updatedat: new Date().toISOString(),
+      },
+    });
+
+    let transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.MAILER_ID,
+        pass: process.env.MAILER_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: 'yaswanth.k23@gmail.com',
+      to: vendorSignUpDto.emailId,
+      subject: 'Congratulations! Your Registration is Complete',
+      html: `
+        <p>Hello ${vendorSignUpDto.fullName},</p>
+        
+        <p>Congratulations! Your registration is complete, and you can now log in to our service using your credentials. Thank you for choosing our service.</p>
+        
+        <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>
+        
+        <p>Best regards,<br/>BWB</p>
+        
+        <p>Visit our website: <a href="https://app-vendor.netlify.app/">https://app-vendor.netlify.app/</a></p>
+      `,
+    };
+
+    transporter.sendMail(mailOptions);
+
+    return {
+      data: { statusCode: 200, userId: userId },
     };
   }
 }

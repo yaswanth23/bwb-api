@@ -54,3 +54,35 @@ export class LoginDto {
   @ApiProperty()
   password: string;
 }
+
+export class VendorSignUpDto {
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  fullName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  organisationName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  emailId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  mobileNumber: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  roleId: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  password: string;
+}
