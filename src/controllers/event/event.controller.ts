@@ -14,6 +14,7 @@ import {
   DeleteTNCDto,
   EventScheduleDto,
   GetEventsDto,
+  GetEventsListDto,
 } from '../../models/dto/event/event.dto';
 
 @ApiTags('Event APIs')
@@ -60,5 +61,14 @@ export class EventController {
   @Get('count/vendor/:userId')
   async getVendorEventsCount(@Param('userId') userId: string) {
     return await this.eventService.getVendorEventsCount(userId);
+  }
+
+  @Get('list')
+  @ApiQuery({ name: 'limit', type: Number, required: false })
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'status', enum: ['LIVE', 'CLOSED'] })
+  @ApiQuery({ name: 'userId', type: Number, required: true })
+  async getEventsList(@Query() params: GetEventsListDto) {
+    return await this.eventService.getEventsList(params);
   }
 }

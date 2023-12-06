@@ -57,7 +57,29 @@ export class GetEventsDto {
 
   @IsString()
   @IsIn(['LIVE', 'UPCOMING', 'CLOSED'], {
-    message: 'Status must be LIVE or UPCOMING orCLOSED',
+    message: 'Status must be LIVE or UPCOMING or CLOSED',
+  })
+  status: string;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  page: number = 1;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  limit: number = 10;
+}
+
+export class GetEventsListDto {
+  @IsNumber()
+  @Type(() => Number)
+  userId: number;
+
+  @IsString()
+  @IsIn(['LIVE', 'CLOSED'], {
+    message: 'Status must be LIVE or CLOSED',
   })
   status: string;
 
