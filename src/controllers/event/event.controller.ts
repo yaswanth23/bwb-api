@@ -56,4 +56,9 @@ export class EventController {
   async getEventsCount(@Param('userId') userId: string) {
     return await this.eventService.getEventsCount(userId);
   }
+
+  @Get('count/vendor/:userId')
+  async getVendorEventsCount(@Param('userId') userId: string) {
+    return await this.eventService.getVendorEventsCount(userId);
+  }
 }

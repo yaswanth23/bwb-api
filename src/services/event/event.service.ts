@@ -258,4 +258,29 @@ export class EventService {
       },
     };
   }
+
+  async getVendorEventsCount(userId: string) {
+    const totalEventCount = await this.prismaService.eventDetails.count({});
+
+    const liveEventCount = await this.prismaService.eventDetails.count({
+      where: {
+        eventstatus: 'LIVE',
+      },
+    });
+
+    const closedEventCount = await this.prismaService.eventDetails.count({
+      where: {
+        eventstatus: 'CLOSED',
+      },
+    });
+
+    return {
+      data: {
+        statusCode: 200,
+        liveEventCount,
+        totalEventCount,
+        closedEventCount,
+      },
+    };
+  }
 }
