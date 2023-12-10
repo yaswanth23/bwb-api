@@ -71,4 +71,12 @@ export class EventController {
   async getEventsList(@Query() params: GetEventsListDto) {
     return await this.eventService.getEventsList(params);
   }
+
+  @Get('details/:userId/:eventId')
+  async getEventDetails(
+    @Param('userId') userId: string,
+    @Param('eventId') eventId: string,
+  ) {
+    return await this.eventService.getEventDetails(userId, eventId);
+  }
 }

@@ -312,4 +312,26 @@ export class EventService {
       },
     };
   }
+
+  async getEventDetails(userId: string, eventId: string) {
+    const data = await this.prismaService.eventDetails.findFirst({
+      where: {
+        eventid: BigInt(eventId),
+      },
+      include: {
+        eventAttributesStore: {
+          where: {
+            key: { in: ['AWARD_TYPE', 'PRODUCT_DETAILS'] },
+          },
+        },
+      },
+    });
+
+    return {
+      data: {
+        statusCode: 200,
+        eventDetails: data,
+      },
+    };
+  }
 }
