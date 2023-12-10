@@ -356,11 +356,26 @@ export class EventService {
       const productIdsAttribute = data.eventAttributesStore.find(
         (attribute) => attribute.key === 'PRODUCT_IDS',
       );
-      const productDetails = await this.prismaService.products.findMany({
+      let productDetails = await this.prismaService.products.findMany({
         where: {
           productid: { in: JSON.parse(productIdsAttribute.value) },
         },
       });
+
+      await Promise.all(
+        productDetails.map(async (item: any) => {
+          const productComparision =
+            await this.prismaService.productComparisons.findMany({
+              where: {
+                productid: item.productid,
+                vendoruserid: BigInt(userId),
+              },
+            });
+
+          item.productComparisions = productComparision;
+        }),
+      );
+
       response.productDetails = productDetails;
     }
 
