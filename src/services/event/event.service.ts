@@ -157,9 +157,7 @@ export class EventService {
 
     await Promise.all(
       eventScheduleDto.productDetails.map(async (item) => {
-        let productId = this.idGeneratorService.generateId();
-        productIds.push(productId);
-        await this.prismaService.products.create({
+        const product = await this.prismaService.products.create({
           data: {
             userid: eventScheduleDto.userId,
             product: item.product,
@@ -171,6 +169,7 @@ export class EventService {
             createdby: eventScheduleDto.userId,
           },
         });
+        productIds.push(product.productid);
       }),
     );
 
