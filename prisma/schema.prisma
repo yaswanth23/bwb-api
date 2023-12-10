@@ -177,3 +177,32 @@ model eventDetails {
   updatedat            DateTime?              @db.Timestamp(6)
   eventAttributesStore eventAttributesStore[]
 }
+
+model productComparisons {
+  productid      BigInt    @id
+  vendoruserid   BigInt?
+  counterprice   Decimal?  @db.Decimal
+  vendorprice    Decimal?  @db.Decimal
+  vendorunittype String?   @db.VarChar
+  status         String?   @db.VarChar
+  createdat      DateTime? @db.Timestamp(6)
+  createdby      BigInt?
+  updatedat      DateTime? @db.Timestamp(6)
+  updatedby      BigInt?
+  products       products  @relation(fields: [productid], references: [productid], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model products {
+  productid          BigInt              @id
+  userid             BigInt?
+  product            String?
+  productvariant     String?
+  quantity           Int?
+  deliverylocation   String?
+  status             String?             @db.VarChar
+  createdat          DateTime?           @db.Timestamp(6)
+  createdby          BigInt?
+  updatedat          DateTime?           @db.Timestamp(6)
+  updatedby          BigInt?
+  productComparisons productComparisons?
+}

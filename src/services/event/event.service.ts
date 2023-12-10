@@ -151,6 +151,28 @@ export class EventService {
     deliveryTimeDate.setMinutes(deliveryTimeDate.getMinutes() + 30);
     deliveryDate = deliveryTimeDate.toISOString();
 
+    let productIds: any = [];
+
+    const productDetails = eventScheduleDto.productDetails.map((item) => {
+      let productId = this.idGeneratorService.generateId();
+      productIds.push(productId);
+      return {
+        productid: productId,
+        userid: eventScheduleDto.userId,
+        product: item.product,
+        productvariant: item.productVariant,
+        quantity: item.quantity,
+        deliverylocation: item.deliveryLocation,
+        status: 'OPEN',
+        createdat: new Date().toISOString(),
+        createdby: eventScheduleDto.userId,
+      };
+    });
+
+    await this.prismaService.products.createMany({
+      data: productDetails,
+    });
+
     await this.prismaService.eventDetails.create({
       data: {
         eventid: eventId,
@@ -176,8 +198,8 @@ export class EventService {
         },
         {
           eventid: eventId,
-          key: 'PRODUCT_DETAILS',
-          value: JSON.stringify(eventScheduleDto.productDetails),
+          key: 'PRODUCT_IDS',
+          value: JSON.stringify(productIds),
           createdby: eventScheduleDto.userId,
           createdat: new Date().toISOString(),
         },
@@ -213,7 +235,7 @@ export class EventService {
       include: {
         eventAttributesStore: {
           where: {
-            key: 'PRODUCT_DETAILS',
+            key: 'PRODUCT_IDS',
           },
         },
       },
@@ -297,7 +319,7 @@ export class EventService {
       include: {
         eventAttributesStore: {
           where: {
-            key: 'PRODUCT_DETAILS',
+            key: 'PRODUCT_IDS',
           },
         },
       },
