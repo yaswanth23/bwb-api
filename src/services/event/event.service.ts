@@ -161,7 +161,6 @@ export class EventService {
         productIds.push(productId);
         await this.prismaService.products.create({
           data: {
-            productid: productId,
             userid: eventScheduleDto.userId,
             product: item.product,
             productvariant: item.productVariant,
