@@ -93,3 +93,17 @@ export class GetEventsListDto {
   @IsOptional()
   limit: number = 10;
 }
+
+export class VendorPriceSubmitDto {
+  @ApiProperty()
+  @IsNumberString()
+  vendorUserId: number;
+
+  @ApiProperty()
+  @IsNumberString()
+  productId: number;
+
+  @ApiProperty()
+  @IsNumber()
+  vendorPrice: number;
+}

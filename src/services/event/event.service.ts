@@ -6,6 +6,7 @@ import {
   EventScheduleDto,
   GetEventsDto,
   GetEventsListDto,
+  VendorPriceSubmitDto,
 } from '../../models/dto/event/event.dto';
 import { IdGeneratorService } from '../idGenerator/idgenerator.service';
 
@@ -366,6 +367,37 @@ export class EventService {
       data: {
         statusCode: 200,
         eventDetails: response,
+      },
+    };
+  }
+
+  async vendorPriceSubmit(vendorPriceSubmitDto: VendorPriceSubmitDto) {
+    await this.prismaService.productComparisons.upsert({
+      where: {
+        productid: vendorPriceSubmitDto.productId,
+        vendoruserid: vendorPriceSubmitDto.vendorUserId,
+      },
+      update: {
+        vendorprice: vendorPriceSubmitDto.vendorPrice,
+        updatedat: new Date().toISOString(),
+        updatedby: vendorPriceSubmitDto.vendorUserId,
+      },
+      create: {
+        productid: vendorPriceSubmitDto.productId,
+        vendoruserid: vendorPriceSubmitDto.vendorUserId,
+        counterprice: null,
+        vendorprice: vendorPriceSubmitDto.vendorPrice,
+        vendorunittype: null,
+        status: 'OPEN',
+        createdat: new Date().toISOString(),
+        createdby: vendorPriceSubmitDto.vendorUserId,
+      },
+    });
+
+    return {
+      data: {
+        statusCode: 200,
+        message: 'success',
       },
     };
   }

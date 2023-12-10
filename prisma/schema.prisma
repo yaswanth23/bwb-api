@@ -181,8 +181,8 @@ model eventDetails {
 model productComparisons {
   productid      BigInt    @id
   vendoruserid   BigInt?
-  counterprice   Decimal?  @db.Decimal
-  vendorprice    Decimal?  @db.Decimal
+  counterprice   Int?
+  vendorprice    Int?
   vendorunittype String?   @db.VarChar
   status         String?   @db.VarChar
   createdat      DateTime? @db.Timestamp(6)
