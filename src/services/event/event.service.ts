@@ -343,16 +343,29 @@ export class EventService {
       include: {
         eventAttributesStore: {
           where: {
-            key: { in: ['AWARD_TYPE', 'PRODUCT_DETAILS'] },
+            key: { in: ['AWARD_TYPE', 'PRODUCT_IDS'] },
           },
         },
       },
     });
 
+    let response: any = data;
+    if (data) {
+      const productIdsAttribute = data.eventAttributesStore.find(
+        (attribute) => attribute.key === 'PRODUCT_IDS',
+      );
+      const productDetails = await this.prismaService.products.findMany({
+        where: {
+          productid: { in: JSON.parse(productIdsAttribute.value) },
+        },
+      });
+      response.productDetails = productDetails;
+    }
+
     return {
       data: {
         statusCode: 200,
-        eventDetails: data,
+        eventDetails: response,
       },
     };
   }
