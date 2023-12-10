@@ -199,7 +199,7 @@ export class EventService {
         {
           eventid: eventId,
           key: 'PRODUCT_IDS',
-          value: JSON.stringify(productIds),
+          value: JSON.stringify(productIds.map((id) => Number(id))),
           createdby: eventScheduleDto.userId,
           createdat: new Date().toISOString(),
         },
