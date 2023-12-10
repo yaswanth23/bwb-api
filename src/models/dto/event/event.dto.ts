@@ -107,3 +107,17 @@ export class VendorPriceSubmitDto {
   @IsNumber()
   vendorPrice: number;
 }
+
+export class CounterPriceSubmitDto {
+  @ApiProperty()
+  @IsNumberString()
+  userId: number;
+
+  @ApiProperty()
+  @IsNumberString()
+  productId: number;
+
+  @ApiProperty()
+  @IsNumber()
+  counterPrice: number;
+}

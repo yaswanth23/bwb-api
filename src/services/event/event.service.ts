@@ -7,6 +7,7 @@ import {
   GetEventsDto,
   GetEventsListDto,
   VendorPriceSubmitDto,
+  CounterPriceSubmitDto,
 } from '../../models/dto/event/event.dto';
 import { IdGeneratorService } from '../idGenerator/idgenerator.service';
 
@@ -391,6 +392,36 @@ export class EventService {
         status: 'OPEN',
         createdat: new Date().toISOString(),
         createdby: vendorPriceSubmitDto.vendorUserId,
+      },
+    });
+
+    return {
+      data: {
+        statusCode: 200,
+        message: 'success',
+      },
+    };
+  }
+
+  async counterPriceSubmit(counterPriceSubmitDto: CounterPriceSubmitDto) {
+    await this.prismaService.productComparisons.upsert({
+      where: {
+        productid: counterPriceSubmitDto.productId,
+      },
+      update: {
+        counterprice: counterPriceSubmitDto.counterPrice,
+        updatedat: new Date().toISOString(),
+        updatedby: counterPriceSubmitDto.userId,
+      },
+      create: {
+        productid: counterPriceSubmitDto.productId,
+        vendoruserid: null,
+        counterprice: counterPriceSubmitDto.counterPrice,
+        vendorprice: null,
+        vendorunittype: null,
+        status: 'OPEN',
+        createdat: new Date().toISOString(),
+        createdby: counterPriceSubmitDto.userId,
       },
     });
 
