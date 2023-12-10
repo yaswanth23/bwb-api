@@ -153,25 +153,25 @@ export class EventService {
 
     let productIds: any = [];
 
-    const productDetails = eventScheduleDto.productDetails.map((item) => {
-      let productId = this.idGeneratorService.generateId();
-      productIds.push(productId);
-      return {
-        productid: productId,
-        userid: eventScheduleDto.userId,
-        product: item.product,
-        productvariant: item.productVariant,
-        quantity: item.quantity,
-        deliverylocation: item.deliveryLocation,
-        status: 'OPEN',
-        createdat: new Date().toISOString(),
-        createdby: eventScheduleDto.userId,
-      };
-    });
-
-    await this.prismaService.products.createMany({
-      data: productDetails,
-    });
+    await Promise.all(
+      eventScheduleDto.productDetails.map(async (item) => {
+        let productId = this.idGeneratorService.generateId();
+        productIds.push(productId);
+        await this.prismaService.products.create({
+          data: {
+            productid: productId,
+            userid: eventScheduleDto.userId,
+            product: item.product,
+            productvariant: item.productVariant,
+            quantity: item.quantity,
+            deliverylocation: item.deliveryLocation,
+            status: 'OPEN',
+            createdat: new Date().toISOString(),
+            createdby: eventScheduleDto.userId,
+          },
+        });
+      }),
+    );
 
     await this.prismaService.eventDetails.create({
       data: {
