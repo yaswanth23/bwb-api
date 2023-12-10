@@ -193,7 +193,7 @@ model productComparisons {
 }
 
 model products {
-  productid          BigInt              @id
+  productid          BigInt              @id @default(autoincrement())
   userid             BigInt?
   product            String?
   productvariant     String?
