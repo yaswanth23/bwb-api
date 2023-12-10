@@ -16,16 +16,15 @@ export class IdGeneratorService {
 
     if (timestamp === this.lastTimestamp) {
       this.sequence = (this.sequence + 1) & 0xfff; // Increment sequence and wrap if necessary
-
-      if (this.sequence === 0) {
-        // Sequence overflow, wait for next millisecond
-        timestamp = this.waitNextMillis(this.lastTimestamp);
-      }
     } else {
-      this.sequence = 0;
+      this.sequence = (this.sequence + 1) & 0xfff; // Increment sequence even if timestamp is not equal to lastTimestamp
+      this.lastTimestamp = timestamp;
     }
 
-    this.lastTimestamp = timestamp;
+    if (this.sequence === 0) {
+      // Sequence overflow, wait for next millisecond
+      timestamp = this.waitNextMillis(this.lastTimestamp);
+    }
 
     const idBigInt =
       ((BigInt(timestamp) - BigInt(this.epoch)) << 22n) |
