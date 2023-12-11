@@ -388,6 +388,22 @@ export class EventService {
   }
 
   async vendorPriceSubmit(vendorPriceSubmitDto: VendorPriceSubmitDto) {
+    const data = await this.prismaService.productComparisons.findFirst({
+      where: {
+        productid: vendorPriceSubmitDto.productId,
+        vendoruserid: vendorPriceSubmitDto.vendorUserId,
+        vendorstatus: { in: ['ACCEPTED', 'CLOSED'] },
+      },
+    });
+    if (data) {
+      return {
+        data: {
+          statusCode: 200,
+          message: 'success',
+        },
+      };
+    }
+
     await this.prismaService.productComparisons.upsert({
       where: {
         productid: vendorPriceSubmitDto.productId,
