@@ -16,7 +16,8 @@ import {
   GetEventsDto,
   GetEventsListDto,
   VendorPriceSubmitDto,
-  CounterPriceSubmitDto
+  CounterPriceSubmitDto,
+  CounterPriceStatusChangeDto,
 } from '../../models/dto/event/event.dto';
 
 @ApiTags('Event APIs')
@@ -88,7 +89,18 @@ export class EventController {
   }
 
   @Post('post/counter/price')
-  async counterPriceSubmit(@Body() counterPriceSubmitDto: CounterPriceSubmitDto) {
+  async counterPriceSubmit(
+    @Body() counterPriceSubmitDto: CounterPriceSubmitDto,
+  ) {
     return await this.eventService.counterPriceSubmit(counterPriceSubmitDto);
+  }
+
+  @Post('vendor/counter-price/status/change')
+  async changeStatusCounterPrice(
+    @Body() counterPriceStatusChangeDto: CounterPriceStatusChangeDto,
+  ) {
+    return await this.eventService.changeStatusCounterPrice(
+      counterPriceStatusChangeDto,
+    );
   }
 }

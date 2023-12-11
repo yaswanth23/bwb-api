@@ -8,6 +8,7 @@ import {
   GetEventsListDto,
   VendorPriceSubmitDto,
   CounterPriceSubmitDto,
+  CounterPriceStatusChangeDto,
 } from '../../models/dto/event/event.dto';
 import { IdGeneratorService } from '../idGenerator/idgenerator.service';
 
@@ -459,6 +460,39 @@ export class EventService {
         createdby: counterPriceSubmitDto.userId,
       },
     });
+
+    return {
+      data: {
+        statusCode: 200,
+        message: 'success',
+      },
+    };
+  }
+
+  async changeStatusCounterPrice(
+    counterPriceStatusChangeDto: CounterPriceStatusChangeDto,
+  ) {
+    const data = await this.prismaService.productComparisons.findFirst({
+      where: {
+        productid: counterPriceStatusChangeDto.productId,
+        vendoruserid: counterPriceStatusChangeDto.vendorUserId,
+        vendorstatus: 'OPEN',
+      },
+    });
+
+    if (data) {
+      await this.prismaService.productComparisons.update({
+        where: {
+          productid: counterPriceStatusChangeDto.productId,
+          vendoruserid: counterPriceStatusChangeDto.vendorUserId,
+        },
+        data: {
+          vendorstatus: counterPriceStatusChangeDto.status,
+          updatedat: new Date().toISOString(),
+          updatedby: counterPriceStatusChangeDto.vendorUserId,
+        },
+      });
+    }
 
     return {
       data: {

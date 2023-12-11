@@ -121,3 +121,17 @@ export class CounterPriceSubmitDto {
   @IsNumber()
   counterPrice: number;
 }
+
+export class CounterPriceStatusChangeDto {
+  @ApiProperty()
+  @IsNumberString()
+  vendorUserId: number;
+
+  @ApiProperty()
+  @IsNumberString()
+  productId: number;
+
+  @ApiProperty()
+  @IsString()
+  status: string;
+}
