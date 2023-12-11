@@ -393,7 +393,7 @@ export class EventService {
       where: {
         productid: vendorPriceSubmitDto.productId,
         vendoruserid: vendorPriceSubmitDto.vendorUserId,
-        vendorstatus: { in: ['ACCEPTED', 'CLOSED'] },
+        vendorstatus: { in: ['ACCEPTED', 'CLOSED', 'REJECTED'] },
       },
     });
     if (data) {
