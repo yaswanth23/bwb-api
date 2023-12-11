@@ -189,6 +189,8 @@ model productComparisons {
   createdby      BigInt?
   updatedat      DateTime? @db.Timestamp(6)
   updatedby      BigInt?
+  vendorstatus   String?   @db.VarChar
+  userstatus     String?   @db.VarChar
   products       products  @relation(fields: [productid], references: [productid], onDelete: NoAction, onUpdate: NoAction)
 }
 

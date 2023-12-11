@@ -367,6 +367,8 @@ export class EventService {
               where: {
                 productid: item.productid,
                 vendoruserid: BigInt(userId),
+                vendorstatus: 'OPEN',
+                userstatus: 'OPEN',
               },
             });
 
@@ -403,6 +405,8 @@ export class EventService {
         vendorprice: vendorPriceSubmitDto.vendorPrice,
         vendorunittype: null,
         status: 'OPEN',
+        vendorstatus: 'OPEN',
+        userstatus: 'OPEN',
         createdat: new Date().toISOString(),
         createdby: vendorPriceSubmitDto.vendorUserId,
       },
@@ -433,6 +437,8 @@ export class EventService {
         vendorprice: null,
         vendorunittype: null,
         status: 'OPEN',
+        vendorstatus: 'OPEN',
+        userstatus: 'OPEN',
         createdat: new Date().toISOString(),
         createdby: counterPriceSubmitDto.userId,
       },
