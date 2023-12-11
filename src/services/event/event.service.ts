@@ -368,8 +368,12 @@ export class EventService {
               where: {
                 productid: item.productid,
                 vendoruserid: BigInt(userId),
-                vendorstatus: 'OPEN',
-                userstatus: 'OPEN',
+                vendorstatus: {
+                  in: ['ACCEPTED', 'CLOSED', 'REJECTED', 'OPEN'],
+                },
+                userstatus: {
+                  in: ['ACCEPTED', 'CLOSED', 'REJECTED', 'OPEN'],
+                },
               },
             });
 
