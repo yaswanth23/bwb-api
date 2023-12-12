@@ -611,6 +611,17 @@ export class EventService {
           updatedby: userProductStatusChangeDto.userId,
         },
       });
+
+      await this.prismaService.productComparisons.update({
+        where: {
+          productid: userProductStatusChangeDto.productId,
+        },
+        data: {
+          status: userProductStatusChangeDto.status,
+          updatedat: new Date().toISOString(),
+          updatedby: userProductStatusChangeDto.userId,
+        },
+      });
     }
 
     return {
