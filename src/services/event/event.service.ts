@@ -399,7 +399,6 @@ export class EventService {
         productid: vendorPriceSubmitDto.productId,
         vendoruserid: vendorPriceSubmitDto.vendorUserId,
         status: { in: ['ACCEPTED', 'NOT ACCEPTED'] },
-        vendorstatus: { in: ['ACCEPTED', 'CLOSED', 'REJECTED'] },
       },
     });
 
