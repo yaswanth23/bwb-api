@@ -633,6 +633,20 @@ export class EventService {
           updatedby: userProductStatusChangeDto.userId,
         },
       });
+
+      if (userProductStatusChangeDto.status === 'ACCEPTED') {
+        await this.prismaService.productComparisons.updateMany({
+          where: {
+            vendoruserid: { not: userProductStatusChangeDto.vendorUserId },
+            productid: userProductStatusChangeDto.productId,
+          },
+          data: {
+            status: 'NOT ACCEPTED',
+            updatedat: new Date().toISOString(),
+            updatedby: userProductStatusChangeDto.userId,
+          },
+        });
+      }
     }
 
     return {
