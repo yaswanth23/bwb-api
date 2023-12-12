@@ -9,6 +9,7 @@ import {
   VendorPriceSubmitDto,
   CounterPriceSubmitDto,
   CounterPriceStatusChangeDto,
+  UserProductStatusChangeDto,
 } from '../../models/dto/event/event.dto';
 import { IdGeneratorService } from '../idGenerator/idgenerator.service';
 
@@ -583,6 +584,39 @@ export class EventService {
       data: {
         statusCode: 200,
         eventDetails: response,
+      },
+    };
+  }
+
+  async changeUserProductStatus(
+    userProductStatusChangeDto: UserProductStatusChangeDto,
+  ) {
+    const data = await this.prismaService.products.findFirst({
+      where: {
+        productid: userProductStatusChangeDto.productId,
+        userid: userProductStatusChangeDto.userId,
+        status: 'OPEN',
+      },
+    });
+
+    if (data) {
+      await this.prismaService.products.update({
+        where: {
+          productid: userProductStatusChangeDto.productId,
+          userid: userProductStatusChangeDto.userId,
+        },
+        data: {
+          status: userProductStatusChangeDto.status,
+          updatedat: new Date().toISOString(),
+          updatedby: userProductStatusChangeDto.userId,
+        },
+      });
+    }
+
+    return {
+      data: {
+        statusCode: 200,
+        message: 'success',
       },
     };
   }

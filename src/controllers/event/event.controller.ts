@@ -18,6 +18,7 @@ import {
   VendorPriceSubmitDto,
   CounterPriceSubmitDto,
   CounterPriceStatusChangeDto,
+  UserProductStatusChangeDto,
 } from '../../models/dto/event/event.dto';
 
 @ApiTags('Event APIs')
@@ -110,5 +111,14 @@ export class EventController {
     @Param('eventId') eventId: string,
   ) {
     return await this.eventService.getUserEventDetails(userId, eventId);
+  }
+
+  @Post('user/product/status')
+  async changeUserProductStatus(
+    @Body() userProductStatusChangeDto: UserProductStatusChangeDto,
+  ) {
+    return await this.eventService.changeUserProductStatus(
+      userProductStatusChangeDto,
+    );
   }
 }

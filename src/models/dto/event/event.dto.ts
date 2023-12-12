@@ -135,3 +135,17 @@ export class CounterPriceStatusChangeDto {
   @IsString()
   status: string;
 }
+
+export class UserProductStatusChangeDto {
+  @ApiProperty()
+  @IsNumberString()
+  userId: number;
+
+  @ApiProperty()
+  @IsNumberString()
+  productId: number;
+
+  @ApiProperty()
+  @IsString()
+  status: string;
+}
