@@ -533,7 +533,7 @@ export class EventService {
       const productIdsAttribute = data.eventAttributesStore.find(
         (attribute) => attribute.key === 'PRODUCT_IDS',
       );
-      let productDetails = await this.prismaService.products.findMany({
+      let productDetails: any = await this.prismaService.products.findMany({
         where: {
           productid: { in: JSON.parse(productIdsAttribute.value) },
         },
@@ -541,7 +541,7 @@ export class EventService {
 
       await Promise.all(
         productDetails.map(async (item: any) => {
-          const productComparision =
+          let productComparision: any =
             await this.prismaService.productComparisons.findMany({
               where: {
                 productid: item.productid,
@@ -553,6 +553,24 @@ export class EventService {
                 },
               },
             });
+
+          if (productComparision.length > 0) {
+            await Promise.all(
+              productComparision.map(async (data: any) => {
+                const vendorDetails =
+                  await this.prismaService.userDetails.findFirst({
+                    where: {
+                      userid: data.vendoruserid,
+                    },
+                    select: {
+                      organisationname: true,
+                    },
+                  });
+                data.totalPrice = item.quantity * data.vendorprice;
+                data.vendorDetails = vendorDetails;
+              }),
+            );
+          }
 
           item.productComparisions = productComparision;
         }),
