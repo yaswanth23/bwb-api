@@ -402,7 +402,17 @@ export class EventService {
         vendorstatus: { in: ['ACCEPTED', 'CLOSED', 'REJECTED'] },
       },
     });
+
     if (data) {
+      return {
+        data: {
+          statusCode: 200,
+          message: 'success',
+        },
+      };
+    }
+
+    if (['ACCEPTED', 'CLOSED', 'REJECTED'].includes(data.vendorstatus)) {
       return {
         data: {
           statusCode: 200,
