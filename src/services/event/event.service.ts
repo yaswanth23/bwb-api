@@ -571,6 +571,7 @@ export class EventService {
                       userid: data.vendoruserid,
                     },
                     select: {
+                      userid: true,
                       organisationname: true,
                     },
                   });
