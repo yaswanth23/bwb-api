@@ -115,6 +115,10 @@ export class CounterPriceSubmitDto {
 
   @ApiProperty()
   @IsNumberString()
+  vendorUserId: number;
+
+  @ApiProperty()
+  @IsNumberString()
   productId: number;
 
   @ApiProperty()
@@ -140,6 +144,10 @@ export class UserProductStatusChangeDto {
   @ApiProperty()
   @IsNumberString()
   userId: number;
+
+  @ApiProperty()
+  @IsNumberString()
+  vendorUserId: number;
 
   @ApiProperty()
   @IsNumberString()

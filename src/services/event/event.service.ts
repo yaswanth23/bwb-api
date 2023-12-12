@@ -412,8 +412,10 @@ export class EventService {
 
     await this.prismaService.productComparisons.upsert({
       where: {
-        productid: vendorPriceSubmitDto.productId,
-        vendoruserid: vendorPriceSubmitDto.vendorUserId,
+        productid_vendoruserid: {
+          productid: vendorPriceSubmitDto.productId,
+          vendoruserid: vendorPriceSubmitDto.vendorUserId,
+        },
       },
       update: {
         vendorprice: vendorPriceSubmitDto.vendorPrice,
@@ -445,7 +447,10 @@ export class EventService {
   async counterPriceSubmit(counterPriceSubmitDto: CounterPriceSubmitDto) {
     await this.prismaService.productComparisons.upsert({
       where: {
-        productid: counterPriceSubmitDto.productId,
+        productid_vendoruserid: {
+          productid: counterPriceSubmitDto.productId,
+          vendoruserid: counterPriceSubmitDto.vendorUserId,
+        },
       },
       update: {
         counterprice: counterPriceSubmitDto.counterPrice,
@@ -488,8 +493,10 @@ export class EventService {
     if (data) {
       await this.prismaService.productComparisons.update({
         where: {
-          productid: counterPriceStatusChangeDto.productId,
-          vendoruserid: counterPriceStatusChangeDto.vendorUserId,
+          productid_vendoruserid: {
+            productid: counterPriceStatusChangeDto.productId,
+            vendoruserid: counterPriceStatusChangeDto.vendorUserId,
+          },
         },
         data: {
           vendorstatus: counterPriceStatusChangeDto.status,
@@ -614,7 +621,10 @@ export class EventService {
 
       await this.prismaService.productComparisons.update({
         where: {
-          productid: userProductStatusChangeDto.productId,
+          productid_vendoruserid: {
+            vendoruserid: userProductStatusChangeDto.vendorUserId,
+            productid: userProductStatusChangeDto.productId,
+          },
         },
         data: {
           status: userProductStatusChangeDto.status,

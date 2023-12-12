@@ -179,7 +179,8 @@ model eventDetails {
 }
 
 model productComparisons {
-  productid      BigInt    @id
+  id             BigInt    @id @default(autoincrement())
+  productid      BigInt?
   vendoruserid   BigInt?
   counterprice   Int?
   vendorprice    Int?
