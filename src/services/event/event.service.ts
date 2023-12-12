@@ -163,7 +163,7 @@ export class EventService {
             userid: eventScheduleDto.userId,
             product: item.product,
             productvariant: item.productVariant,
-            quantity: item.quantity,
+            quantity: Number(item.quantity),
             deliverylocation: item.deliveryLocation,
             status: 'OPEN',
             createdat: new Date().toISOString(),
