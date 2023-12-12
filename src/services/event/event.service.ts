@@ -505,4 +505,67 @@ export class EventService {
       },
     };
   }
+
+  async getUserEventDetails(userId: string, eventId: string) {
+    const data = await this.prismaService.eventDetails.findFirst({
+      where: {
+        eventid: BigInt(eventId),
+        userid: BigInt(userId),
+      },
+      include: {
+        eventAttributesStore: {
+          where: {
+            key: { in: ['AWARD_TYPE', 'PRODUCT_IDS'] },
+          },
+        },
+      },
+    });
+
+    let response: any = null;
+
+    if (data) {
+      response = {
+        eventId: data.eventid,
+        eventName: data.eventname,
+        eventStatus: data.eventstatus,
+      };
+
+      const productIdsAttribute = data.eventAttributesStore.find(
+        (attribute) => attribute.key === 'PRODUCT_IDS',
+      );
+      let productDetails = await this.prismaService.products.findMany({
+        where: {
+          productid: { in: JSON.parse(productIdsAttribute.value) },
+        },
+      });
+
+      await Promise.all(
+        productDetails.map(async (item: any) => {
+          const productComparision =
+            await this.prismaService.productComparisons.findMany({
+              where: {
+                productid: item.productid,
+                vendorstatus: {
+                  in: ['ACCEPTED', 'CLOSED', 'REJECTED', 'OPEN'],
+                },
+                userstatus: {
+                  in: ['ACCEPTED', 'CLOSED', 'REJECTED', 'OPEN'],
+                },
+              },
+            });
+
+          item.productComparisions = productComparision;
+        }),
+      );
+
+      response.productDetails = productDetails;
+    }
+
+    return {
+      data: {
+        statusCode: 200,
+        eventDetails: response,
+      },
+    };
+  }
 }

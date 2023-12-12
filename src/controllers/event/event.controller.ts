@@ -103,4 +103,12 @@ export class EventController {
       counterPriceStatusChangeDto,
     );
   }
+
+  @Get('user/details/:userId/:eventId')
+  async getUserEventDetails(
+    @Param('userId') userId: string,
+    @Param('eventId') eventId: string,
+  ) {
+    return await this.eventService.getUserEventDetails(userId, eventId);
+  }
 }
