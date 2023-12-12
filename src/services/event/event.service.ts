@@ -398,44 +398,41 @@ export class EventService {
       where: {
         productid: vendorPriceSubmitDto.productId,
         vendoruserid: vendorPriceSubmitDto.vendorUserId,
+        vendorstatus: { in: ['ACCEPTED', 'CLOSED', 'REJECTED'] },
       },
     });
     if (data) {
-      if (data.vendorstatus === 'OPEN') {
-        await this.prismaService.productComparisons.update({
-          where: {
-            productid: vendorPriceSubmitDto.productId,
-            vendoruserid: vendorPriceSubmitDto.vendorUserId,
-          },
-          data: {
-            vendorprice: vendorPriceSubmitDto.vendorPrice,
-            updatedat: new Date().toISOString(),
-            updatedby: vendorPriceSubmitDto.vendorUserId,
-          },
-        });
-      }
       return {
         data: {
           statusCode: 200,
           message: 'success',
         },
       };
-    } else {
-      await this.prismaService.productComparisons.create({
-        data: {
-          productid: vendorPriceSubmitDto.productId,
-          vendoruserid: vendorPriceSubmitDto.vendorUserId,
-          counterprice: null,
-          vendorprice: vendorPriceSubmitDto.vendorPrice,
-          vendorunittype: null,
-          status: 'OPEN',
-          vendorstatus: 'OPEN',
-          userstatus: 'OPEN',
-          createdat: new Date().toISOString(),
-          createdby: vendorPriceSubmitDto.vendorUserId,
-        },
-      });
     }
+
+    await this.prismaService.productComparisons.upsert({
+      where: {
+        productid: vendorPriceSubmitDto.productId,
+        vendoruserid: vendorPriceSubmitDto.vendorUserId,
+      },
+      update: {
+        vendorprice: vendorPriceSubmitDto.vendorPrice,
+        updatedat: new Date().toISOString(),
+        updatedby: vendorPriceSubmitDto.vendorUserId,
+      },
+      create: {
+        productid: vendorPriceSubmitDto.productId,
+        vendoruserid: vendorPriceSubmitDto.vendorUserId,
+        counterprice: null,
+        vendorprice: vendorPriceSubmitDto.vendorPrice,
+        vendorunittype: null,
+        status: 'OPEN',
+        vendorstatus: 'OPEN',
+        userstatus: 'OPEN',
+        createdat: new Date().toISOString(),
+        createdby: vendorPriceSubmitDto.vendorUserId,
+      },
+    });
 
     return {
       data: {

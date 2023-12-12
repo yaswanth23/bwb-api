@@ -191,20 +191,20 @@ model productComparisons {
   updatedby      BigInt?
   vendorstatus   String?   @db.VarChar
   userstatus     String?   @db.VarChar
-  products       products  @relation(fields: [productid], references: [productid], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([productid, vendoruserid])
 }
 
 model products {
-  productid          BigInt              @id @default(autoincrement())
-  userid             BigInt?
-  product            String?
-  productvariant     String?
-  quantity           Int?
-  deliverylocation   String?
-  status             String?             @db.VarChar
-  createdat          DateTime?           @db.Timestamp(6)
-  createdby          BigInt?
-  updatedat          DateTime?           @db.Timestamp(6)
-  updatedby          BigInt?
-  productComparisons productComparisons?
+  productid        BigInt    @id @default(autoincrement())
+  userid           BigInt?
+  product          String?
+  productvariant   String?
+  quantity         Int?
+  deliverylocation String?
+  status           String?   @db.VarChar
+  createdat        DateTime? @db.Timestamp(6)
+  createdby        BigInt?
+  updatedat        DateTime? @db.Timestamp(6)
+  updatedby        BigInt?
 }
