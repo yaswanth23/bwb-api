@@ -411,7 +411,7 @@ export class EventService {
       };
     }
 
-    if (['ACCEPTED', 'CLOSED', 'REJECTED'].includes(data.vendorstatus)) {
+    if (['ACCEPTED', 'CLOSED', 'REJECTED'].includes(data?.vendorstatus)) {
       return {
         data: {
           statusCode: 200,
