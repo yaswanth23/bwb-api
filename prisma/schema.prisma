@@ -170,11 +170,12 @@ model eventDetails {
   eventstatus          String?                @db.VarChar(255)
   eventstarttime       DateTime?              @db.Timestamp(6)
   eventduration        Int?
-  deliverydate         DateTime?              @db.Timestamp(6)
+  fromDeliverydate     DateTime?              @db.Timestamp(6)
   createdby            BigInt?
   createdat            DateTime?              @db.Timestamp(6)
   updatedby            BigInt?
   updatedat            DateTime?              @db.Timestamp(6)
+  todeliverydate       DateTime?              @db.Timestamp(6)
   eventAttributesStore eventAttributesStore[]
 }
 

@@ -41,7 +41,8 @@ export class EventScheduleDto {
   userId: bigint;
   eventTitle: string;
   awardType: number;
-  deliveryDate: Date;
+  fromDeliveryDate: Date;
+  toDeliveryDate: Date;
   productDetails: ProductDetailsDto[];
   termsAndConditionsIds: bigint[];
   eventScheduleOption: string;

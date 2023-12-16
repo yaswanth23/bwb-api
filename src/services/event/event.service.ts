@@ -123,7 +123,8 @@ export class EventService {
     let eventStatus: string;
     let eventStartTime: any;
     let eventDuration: number;
-    let deliveryDate: any;
+    let fromDeliveryDate: any;
+    let toDeliveryDate: any;
 
     const eventId = this.idGeneratorService.generateId();
 
@@ -150,10 +151,15 @@ export class EventService {
       eventDuration = durationInHours * 60;
     }
 
-    let deliveryTimeDate = new Date(eventScheduleDto.deliveryDate);
+    let deliveryTimeDate = new Date(eventScheduleDto.fromDeliveryDate);
     deliveryTimeDate.setHours(deliveryTimeDate.getHours() + 5);
     deliveryTimeDate.setMinutes(deliveryTimeDate.getMinutes() + 30);
-    deliveryDate = deliveryTimeDate.toISOString();
+    fromDeliveryDate = deliveryTimeDate.toISOString();
+
+    deliveryTimeDate = new Date(eventScheduleDto.toDeliveryDate);
+    deliveryTimeDate.setHours(deliveryTimeDate.getHours() + 5);
+    deliveryTimeDate.setMinutes(deliveryTimeDate.getMinutes() + 30);
+    toDeliveryDate = deliveryTimeDate.toISOString();
 
     let productIds: any = [];
 
@@ -183,7 +189,8 @@ export class EventService {
         eventstatus: eventStatus,
         eventstarttime: eventStartTime,
         eventduration: eventDuration,
-        deliverydate: deliveryDate,
+        fromDeliverydate: fromDeliveryDate,
+        todeliverydate: toDeliveryDate,
         createdby: eventScheduleDto.userId,
         createdat: new Date().toISOString(),
       },
