@@ -462,6 +462,25 @@ export class EventService {
       },
     });
 
+    const count = await this.prismaService.productComparisons.groupBy({
+      by: ['eventid', 'vendoruserid'],
+      where: {
+        eventid: productData.eventid,
+      },
+      _count: {
+        _all: true,
+      },
+    });
+
+    await this.prismaService.eventDetails.update({
+      where: {
+        eventid: productData.eventid,
+      },
+      data: {
+        vendorscount: count.length,
+      },
+    });
+
     return {
       data: {
         statusCode: 200,
