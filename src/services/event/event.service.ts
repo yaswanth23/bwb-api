@@ -403,6 +403,12 @@ export class EventService {
   }
 
   async vendorPriceSubmit(vendorPriceSubmitDto: VendorPriceSubmitDto) {
+    const productData = await this.prismaService.products.findFirst({
+      where: {
+        productid: vendorPriceSubmitDto.productId,
+      },
+    });
+
     const data = await this.prismaService.productComparisons.findFirst({
       where: {
         productid: vendorPriceSubmitDto.productId,
@@ -452,6 +458,18 @@ export class EventService {
         userstatus: 'OPEN',
         createdat: new Date().toISOString(),
         createdby: vendorPriceSubmitDto.vendorUserId,
+      },
+    });
+
+    await this.prismaService.eventDetails.update({
+      where: {
+        eventid: productData.eventid,
+      },
+      data: {
+        vendorscount: {
+          increment: 1,
+        },
+        updatedat: new Date().toISOString(),
       },
     });
 
