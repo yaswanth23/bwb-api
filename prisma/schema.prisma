@@ -176,6 +176,7 @@ model eventDetails {
   updatedby            BigInt?
   updatedat            DateTime?              @db.Timestamp(6)
   todeliverydate       DateTime?              @db.Timestamp(6)
+  vendorscount         Int?
   eventAttributesStore eventAttributesStore[]
 }
 
@@ -209,4 +210,5 @@ model products {
   createdby        BigInt?
   updatedat        DateTime? @db.Timestamp(6)
   updatedby        BigInt?
+  eventid          BigInt?
 }

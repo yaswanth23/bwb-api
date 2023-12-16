@@ -168,6 +168,7 @@ export class EventService {
         const product = await this.prismaService.products.create({
           data: {
             userid: eventScheduleDto.userId,
+            eventid: eventId,
             product: item.product,
             productvariant: item.productVariant,
             quantity: Number(item.quantity),
@@ -191,6 +192,7 @@ export class EventService {
         eventduration: eventDuration,
         fromDeliverydate: fromDeliveryDate,
         todeliverydate: toDeliveryDate,
+        vendorscount: 0,
         createdby: eventScheduleDto.userId,
         createdat: new Date().toISOString(),
       },
