@@ -450,6 +450,7 @@ export class EventService {
       create: {
         productid: vendorPriceSubmitDto.productId,
         vendoruserid: vendorPriceSubmitDto.vendorUserId,
+        eventid: productData.eventid,
         counterprice: null,
         vendorprice: vendorPriceSubmitDto.vendorPrice,
         vendorunittype: null,
@@ -458,18 +459,6 @@ export class EventService {
         userstatus: 'OPEN',
         createdat: new Date().toISOString(),
         createdby: vendorPriceSubmitDto.vendorUserId,
-      },
-    });
-
-    await this.prismaService.eventDetails.update({
-      where: {
-        eventid: productData.eventid,
-      },
-      data: {
-        vendorscount: {
-          increment: 1,
-        },
-        updatedat: new Date().toISOString(),
       },
     });
 

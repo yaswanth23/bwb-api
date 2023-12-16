@@ -194,6 +194,7 @@ model productComparisons {
   updatedby      BigInt?
   vendorstatus   String?   @db.VarChar
   userstatus     String?   @db.VarChar
+  eventid        BigInt?
 
   @@unique([productid, vendoruserid])
 }
