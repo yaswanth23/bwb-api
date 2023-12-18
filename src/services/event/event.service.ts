@@ -48,7 +48,6 @@ export class EventService {
         isactive: true,
       },
     });
-
     return {
       data: {
         statusCode: 200,
