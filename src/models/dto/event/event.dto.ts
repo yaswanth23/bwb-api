@@ -49,6 +49,7 @@ export class EventScheduleDto {
   eventStartTime: Date;
   eventDurationOption: string;
   eventDuration: string;
+  vendorLimit: number;
 }
 
 export class GetEventsDto {

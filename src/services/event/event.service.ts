@@ -192,6 +192,7 @@ export class EventService {
         fromDeliverydate: fromDeliveryDate,
         todeliverydate: toDeliveryDate,
         vendorscount: 0,
+        vendorlimit: eventScheduleDto.vendorLimit,
         createdby: eventScheduleDto.userId,
         createdat: new Date().toISOString(),
       },

@@ -177,6 +177,7 @@ model eventDetails {
   updatedat            DateTime?              @db.Timestamp(6)
   todeliverydate       DateTime?              @db.Timestamp(6)
   vendorscount         Int?
+  vendorlimit          Int?
   eventAttributesStore eventAttributesStore[]
 }
 
