@@ -699,7 +699,7 @@ export class EventService {
         });
       }
 
-      this.generatePurchaseOrder(data.eventid);
+      // this.generatePurchaseOrder(data.eventid);
     }
 
     return {
@@ -710,247 +710,247 @@ export class EventService {
     };
   }
 
-  async generatePurchaseOrder(eventId: any) {
-    const data = await this.prismaService.products.findMany({
-      where: {
-        eventid: BigInt(eventId),
-      },
-    });
+  //   async generatePurchaseOrder(eventId: any) {
+  //     const data = await this.prismaService.products.findMany({
+  //       where: {
+  //         eventid: BigInt(eventId),
+  //       },
+  //     });
 
-    const counts = data.reduce(
-      (acc, product) => {
-        if (product.status === 'ACCEPTED') {
-          acc.acceptedCount++;
-        } else if (product.status === 'REJECTED') {
-          acc.rejectedCount++;
-        }
+  //     const counts = data.reduce(
+  //       (acc, product) => {
+  //         if (product.status === 'ACCEPTED') {
+  //           acc.acceptedCount++;
+  //         } else if (product.status === 'REJECTED') {
+  //           acc.rejectedCount++;
+  //         }
 
-        return acc;
-      },
-      { acceptedCount: 0, rejectedCount: 0 },
-    );
+  //         return acc;
+  //       },
+  //       { acceptedCount: 0, rejectedCount: 0 },
+  //     );
 
-    const productComparisionData =
-      await this.prismaService.productComparisons.findMany({
-        where: {
-          eventid: BigInt(eventId),
-          status: 'ACCEPTED',
-        },
-      });
+  //     const productComparisionData =
+  //       await this.prismaService.productComparisons.findMany({
+  //         where: {
+  //           eventid: BigInt(eventId),
+  //           status: 'ACCEPTED',
+  //         },
+  //       });
 
-    const vendorIds = productComparisionData.map((item) => item.vendoruserid);
-    const uniqueVendorIds = [...new Set(vendorIds)];
+  //     const vendorIds = productComparisionData.map((item) => item.vendoruserid);
+  //     const uniqueVendorIds = [...new Set(vendorIds)];
 
-    const overallCount = data.length;
+  //     const overallCount = data.length;
 
-    const userDetails = await this.prismaService.userDetails.findFirst({
-      where: {
-        userid: data[0].userid,
-      },
-    });
+  //     const userDetails = await this.prismaService.userDetails.findFirst({
+  //       where: {
+  //         userid: data[0].userid,
+  //       },
+  //     });
 
-    const eventDetails =
-      await this.prismaService.eventAttributesStore.findFirst({
-        where: {
-          eventid: BigInt(eventId),
-          key: 'TERMS_AND_CONDITIONS_IDS',
-        },
-      });
+  //     const eventDetails =
+  //       await this.prismaService.eventAttributesStore.findFirst({
+  //         where: {
+  //           eventid: BigInt(eventId),
+  //           key: 'TERMS_AND_CONDITIONS_IDS',
+  //         },
+  //       });
 
-    const termsAndConditions =
-      await this.prismaService.userTermsConditions.findMany({
-        where: {
-          termsconditionsid: { in: JSON.parse(eventDetails.value) },
-        },
-      });
+  //     const termsAndConditions =
+  //       await this.prismaService.userTermsConditions.findMany({
+  //         where: {
+  //           termsconditionsid: { in: JSON.parse(eventDetails.value) },
+  //         },
+  //       });
 
-    if (overallCount === counts.acceptedCount + counts.rejectedCount) {
-      await Promise.all(
-        uniqueVendorIds.map(async (vendor) => {
-          const vendorDetails = await this.prismaService.userDetails.findFirst({
-            where: {
-              userid: vendor,
-            },
-          });
+  //     if (overallCount === counts.acceptedCount + counts.rejectedCount) {
+  //       await Promise.all(
+  //         uniqueVendorIds.map(async (vendor) => {
+  //           const vendorDetails = await this.prismaService.userDetails.findFirst({
+  //             where: {
+  //               userid: vendor,
+  //             },
+  //           });
 
-          const productComparisions =
-            await this.prismaService.productComparisons.findMany({
-              where: {
-                vendoruserid: vendor,
-                eventid: BigInt(eventId),
-                status: 'ACCEPTED',
-              },
-            });
+  //           const productComparisions =
+  //             await this.prismaService.productComparisons.findMany({
+  //               where: {
+  //                 vendoruserid: vendor,
+  //                 eventid: BigInt(eventId),
+  //                 status: 'ACCEPTED',
+  //               },
+  //             });
 
-          let products = await Promise.all(
-            productComparisions.map(async (item: any) => {
-              const products = await this.prismaService.products.findFirst({
-                where: {
-                  productid: item.productid,
-                },
-              });
+  //           let products = await Promise.all(
+  //             productComparisions.map(async (item: any) => {
+  //               const products = await this.prismaService.products.findFirst({
+  //                 where: {
+  //                   productid: item.productid,
+  //                 },
+  //               });
 
-              return {
-                name: products.product,
-                quantity: products.quantity,
-                amount: item.vendorprice,
-                totalPrice:
-                  Number(products.quantity) * Number(item.vendorprice),
-              };
-            }),
-          );
+  //               return {
+  //                 name: products.product,
+  //                 quantity: products.quantity,
+  //                 amount: item.vendorprice,
+  //                 totalPrice:
+  //                   Number(products.quantity) * Number(item.vendorprice),
+  //               };
+  //             }),
+  //           );
 
-          this.createPDF(
-            eventId,
-            vendorDetails,
-            userDetails,
-            products,
-            termsAndConditions,
-          )
-            .then((filePath) => {
-              this.awsService
-                .uploadFile(filePath as string)
-                .then(async (data) => {
-                  const fileUrl = data.Location;
-                  unlink(filePath as string)
-                    .then(() => {
-                      console.log(`File deleted at ${filePath}`);
-                    })
-                    .catch((error) => {
-                      console.error('Error deleting file:', error);
-                    });
+  //           this.createPDF(
+  //             eventId,
+  //             vendorDetails,
+  //             userDetails,
+  //             products,
+  //             termsAndConditions,
+  //           )
+  //             .then((filePath) => {
+  //               this.awsService
+  //                 .uploadFile(filePath as string)
+  //                 .then(async (data) => {
+  //                   const fileUrl = data.Location;
+  //                   unlink(filePath as string)
+  //                     .then(() => {
+  //                       console.log(`File deleted at ${filePath}`);
+  //                     })
+  //                     .catch((error) => {
+  //                       console.error('Error deleting file:', error);
+  //                     });
 
-                  await this.prismaService.eventAttributesStore.create({
-                    data: {
-                      eventid: BigInt(eventId),
-                      key: 'PURCHASE_ORDER_URL',
-                      value: fileUrl,
-                      createdby: userDetails.userid,
-                      createdat: new Date().toISOString(),
-                    },
-                  });
-                })
-                .catch((error) => {
-                  console.error('Error uploading file:', error);
-                });
-            })
-            .catch((error) => {
-              console.error('Error creating PDF:', error);
-            });
-        }),
-      );
-    }
+  //                   await this.prismaService.eventAttributesStore.create({
+  //                     data: {
+  //                       eventid: BigInt(eventId),
+  //                       key: 'PURCHASE_ORDER_URL',
+  //                       value: fileUrl,
+  //                       createdby: userDetails.userid,
+  //                       createdat: new Date().toISOString(),
+  //                     },
+  //                   });
+  //                 })
+  //                 .catch((error) => {
+  //                   console.error('Error uploading file:', error);
+  //                 });
+  //             })
+  //             .catch((error) => {
+  //               console.error('Error creating PDF:', error);
+  //             });
+  //         }),
+  //       );
+  //     }
 
-    return true;
-  }
+  //     return true;
+  //   }
 
-  createPDF(
-    eventId: string,
-    vendorDetails: any,
-    userDetails: any,
-    products: any,
-    termsAndConditions: any,
-  ) {
-    return new Promise((resolve, reject) => {
-      const doc = new PDFDocument();
-      const regularFont = 'Helvetica';
-      const boldFont = 'Helvetica-Bold';
+  //   createPDF(
+  //     eventId: string,
+  //     vendorDetails: any,
+  //     userDetails: any,
+  //     products: any,
+  //     termsAndConditions: any,
+  //   ) {
+  //     return new Promise((resolve, reject) => {
+  //       const doc = new PDFDocument();
+  //       const regularFont = 'Helvetica';
+  //       const boldFont = 'Helvetica-Bold';
 
-      const date = new Date();
-      const day = String(date.getDate()).padStart(2, '0');
-      const monthNames = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ];
-      const month = monthNames[date.getMonth()];
-      const year = date.getFullYear();
+  //       const date = new Date();
+  //       const day = String(date.getDate()).padStart(2, '0');
+  //       const monthNames = [
+  //         'Jan',
+  //         'Feb',
+  //         'Mar',
+  //         'Apr',
+  //         'May',
+  //         'Jun',
+  //         'Jul',
+  //         'Aug',
+  //         'Sep',
+  //         'Oct',
+  //         'Nov',
+  //         'Dec',
+  //       ];
+  //       const month = monthNames[date.getMonth()];
+  //       const year = date.getFullYear();
 
-      if (!fs.existsSync('./files')) {
-        fs.mkdirSync('./files');
-      }
-      const stream = fs.createWriteStream(`./files/${eventId}.pdf`);
+  //       if (!fs.existsSync('./files')) {
+  //         fs.mkdirSync('./files');
+  //       }
+  //       const stream = fs.createWriteStream(`./files/${eventId}.pdf`);
 
-      doc.pipe(stream);
+  //       doc.pipe(stream);
 
-      doc
-        .font(boldFont)
-        .fontSize(15)
-        .fillColor('#0048ff')
-        .text('bharatwellbeing', 50, 50)
-        .font(regularFont)
-        .fontSize(10)
-        .fillColor('#000')
-        .text(`Purchase Order: ${eventId}`, 300, 50)
-        .text(`Date: ${day}-${month}-${year}`, 300, 70)
-        .moveDown();
+  //       doc
+  //         .font(boldFont)
+  //         .fontSize(15)
+  //         .fillColor('#0048ff')
+  //         .text('bharatwellbeing', 50, 50)
+  //         .font(regularFont)
+  //         .fontSize(10)
+  //         .fillColor('#000')
+  //         .text(`Purchase Order: ${eventId}`, 300, 50)
+  //         .text(`Date: ${day}-${month}-${year}`, 300, 70)
+  //         .moveDown();
 
-      doc.text('Vendor', 50, 150);
-      doc.text(`Name: ${vendorDetails.fullname},`, 50, 165);
-      doc.text(`${vendorDetails.organisationname}`, 50, 175);
-      doc.text('Ship to', 300, 150);
-      doc.text(`Name: ${userDetails.fullname}`, 300, 165);
-      doc.text(`Organisation: ${userDetails.organisationname}`, 300, 175);
-      doc.text(`Mobile: ${userDetails.mobilenumber}`, 300, 185);
-      doc.moveDown();
+  //       doc.text('Vendor', 50, 150);
+  //       doc.text(`Name: ${vendorDetails.fullname},`, 50, 165);
+  //       doc.text(`${vendorDetails.organisationname}`, 50, 175);
+  //       doc.text('Ship to', 300, 150);
+  //       doc.text(`Name: ${userDetails.fullname}`, 300, 165);
+  //       doc.text(`Organisation: ${userDetails.organisationname}`, 300, 175);
+  //       doc.text(`Mobile: ${userDetails.mobilenumber}`, 300, 185);
+  //       doc.moveDown();
 
-      doc.rect(30, 240, 500, 20).fill('#0048ff');
-      doc.fillColor('#fff');
-      doc.text('Products', 50, 240 + 10, {
-        baseline: 'middle',
-      });
-      doc.text('Quantity', 200, 240 + 10, {
-        baseline: 'middle',
-      });
-      doc.text('Amount', 350, 240 + 10, {
-        baseline: 'middle',
-      });
-      doc.text('Total', 500, 240 + 10, { baseline: 'middle' });
+  //       doc.rect(30, 240, 500, 20).fill('#0048ff');
+  //       doc.fillColor('#fff');
+  //       doc.text('Products', 50, 240 + 10, {
+  //         baseline: 'middle',
+  //       });
+  //       doc.text('Quantity', 200, 240 + 10, {
+  //         baseline: 'middle',
+  //       });
+  //       doc.text('Amount', 350, 240 + 10, {
+  //         baseline: 'middle',
+  //       });
+  //       doc.text('Total', 500, 240 + 10, { baseline: 'middle' });
 
-      let y = 270;
-      let sumTotal = 0;
-      products.forEach((product: any) => {
-        const total = product.quantity * product.amount;
-        sumTotal += total;
+  //       let y = 270;
+  //       let sumTotal = 0;
+  //       products.forEach((product: any) => {
+  //         const total = product.quantity * product.amount;
+  //         sumTotal += total;
 
-        doc.fillColor('#000').text(product.name, 50, y);
-        doc.fillColor('#000').text(product.quantity.toString(), 200, y);
-        doc.fillColor('#000').text(product.amount.toString(), 350, y);
-        doc.fillColor('#000').text(total.toString(), 500, y);
-        y += 20;
-      });
+  //         doc.fillColor('#000').text(product.name, 50, y);
+  //         doc.fillColor('#000').text(product.quantity.toString(), 200, y);
+  //         doc.fillColor('#000').text(product.amount.toString(), 350, y);
+  //         doc.fillColor('#000').text(total.toString(), 500, y);
+  //         y += 20;
+  //       });
 
-      doc.fillColor('#000').text('Total Amount:', 350, y);
-      doc.fillColor('#000').text(sumTotal.toString(), 500, y);
+  //       doc.fillColor('#000').text('Total Amount:', 350, y);
+  //       doc.fillColor('#000').text(sumTotal.toString(), 500, y);
 
-      y += 30;
-      doc.rect(30, y, 500, 20).fill('#0048ff');
-      doc
-        .fillColor('#fff')
-        .fontSize(10)
-        .text('Terms and Conditions:', 50, y + 5);
-      y += 30;
+  //       y += 30;
+  //       doc.rect(30, y, 500, 20).fill('#0048ff');
+  //       doc
+  //         .fillColor('#fff')
+  //         .fontSize(10)
+  //         .text('Terms and Conditions:', 50, y + 5);
+  //       y += 30;
 
-      termsAndConditions.forEach((item, index) => {
-        doc
-          .fillColor('#000')
-          .text(`${index + 1}. ${item.termsandconditionstext}`, 50, y);
-        y += 20;
-      });
+  //       termsAndConditions.forEach((item, index) => {
+  //         doc
+  //           .fillColor('#000')
+  //           .text(`${index + 1}. ${item.termsandconditionstext}`, 50, y);
+  //         y += 20;
+  //       });
 
-      doc.end();
+  //       doc.end();
 
-      stream.on('finish', () => resolve(`./files/${eventId}.pdf`));
-      stream.on('error', reject);
-    });
-  }
+  //       stream.on('finish', () => resolve(`./files/${eventId}.pdf`));
+  //       stream.on('error', reject);
+  //     });
+  //   }
 }
