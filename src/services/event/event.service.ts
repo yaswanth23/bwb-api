@@ -360,7 +360,7 @@ export class EventService {
       include: {
         eventAttributesStore: {
           where: {
-            key: { in: ['AWARD_TYPE', 'PRODUCT_IDS'] },
+            key: { in: ['AWARD_TYPE', 'PRODUCT_IDS', 'PURCHASE_ORDER_URL'] },
           },
         },
       },
@@ -376,6 +376,14 @@ export class EventService {
           productid: { in: JSON.parse(productIdsAttribute.value) },
         },
       });
+
+      const purchaseOrderUrl = data.eventAttributesStore.find(
+        (attribute) => attribute.key === 'PURCHASE_ORDER_URL',
+      );
+
+      response.purchaseOrderUrl = purchaseOrderUrl
+        ? purchaseOrderUrl.value
+        : null;
 
       await Promise.all(
         productDetails.map(async (item: any) => {
@@ -602,7 +610,9 @@ export class EventService {
         (attribute) => attribute.key === 'PURCHASE_ORDER_URL',
       );
 
-      response.purchaseOrderUrl = purchaseOrderUrl ? purchaseOrderUrl.value : null;
+      response.purchaseOrderUrl = purchaseOrderUrl
+        ? purchaseOrderUrl.value
+        : null;
       await Promise.all(
         productDetails.map(async (item: any) => {
           let productComparision: any =
