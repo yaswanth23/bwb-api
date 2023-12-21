@@ -574,7 +574,7 @@ export class EventService {
       include: {
         eventAttributesStore: {
           where: {
-            key: { in: ['AWARD_TYPE', 'PRODUCT_IDS'] },
+            key: { in: ['AWARD_TYPE', 'PRODUCT_IDS', 'PURCHASE_ORDER_URL'] },
           },
         },
       },
@@ -598,6 +598,11 @@ export class EventService {
         },
       });
 
+      const purchaseOrderUrl = data.eventAttributesStore.find(
+        (attribute) => attribute.key === 'PURCHASE_ORDER_URL',
+      );
+
+      response.purchaseOrderUrl = purchaseOrderUrl ? purchaseOrderUrl.value : null;
       await Promise.all(
         productDetails.map(async (item: any) => {
           let productComparision: any =
