@@ -673,7 +673,7 @@ export class EventService {
               productid: product.productid,
               product: product.product,
               productvariant: product.productvariant,
-              quantity: product.quantity,
+              quantity: '-',
               deliverylocation: product.deliverylocation,
               price: '-',
               status: '-',
