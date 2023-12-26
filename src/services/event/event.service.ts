@@ -600,10 +600,87 @@ export class EventService {
       const productIdsAttribute = data.eventAttributesStore.find(
         (attribute) => attribute.key === 'PRODUCT_IDS',
       );
+
       let productDetails: any = await this.prismaService.products.findMany({
         where: {
           productid: { in: JSON.parse(productIdsAttribute.value) },
         },
+      });
+
+      const productIds = productDetails.map((item) => item.productid);
+
+      const productComparisions =
+        await this.prismaService.productComparisons.findMany({
+          where: {
+            productid: {
+              in: productIds,
+            },
+            vendorstatus: {
+              in: ['ACCEPTED', 'CLOSED', 'REJECTED', 'OPEN'],
+            },
+            userstatus: {
+              in: ['ACCEPTED', 'CLOSED', 'REJECTED', 'OPEN'],
+            },
+          },
+        });
+
+      const vendorComparisons = Object.values(
+        productComparisions.reduce((acc, comparison) => {
+          const vendorUserIdStr = comparison.vendoruserid.toString();
+          if (!acc[vendorUserIdStr]) {
+            acc[vendorUserIdStr] = {
+              vendoruserid: comparison.vendoruserid,
+              vendorunittype: comparison.vendorunittype,
+              status: comparison.status,
+              vendorstatus: comparison.vendorstatus,
+              userstatus: comparison.userstatus,
+              sumTotal: 0,
+              productQuotes: [],
+            };
+          }
+
+          const productDetail = productDetails.find(
+            (product) => product.productid === comparison.productid,
+          );
+
+          if (productDetail) {
+            const totalPrice = comparison.vendorprice * productDetail.quantity;
+            acc[vendorUserIdStr].sumTotal += totalPrice;
+            acc[vendorUserIdStr].productQuotes.push({
+              productid: productDetail.productid,
+              product: productDetail.product,
+              productvariant: productDetail.productvariant,
+              quantity: productDetail.quantity,
+              deliverylocation: productDetail.deliverylocation,
+              status: productDetail.status,
+              price: comparison.vendorprice,
+              totalPrice,
+            });
+          }
+
+          return acc;
+        }, {}),
+      );
+
+      productDetails.forEach((product) => {
+        vendorComparisons.forEach((vendorComparison: any) => {
+          if (
+            !vendorComparison.productQuotes.some(
+              (quote) => quote.productid === product.productid,
+            )
+          ) {
+            vendorComparison.productQuotes.push({
+              productid: product.productid,
+              product: product.product,
+              productvariant: product.productvariant,
+              quantity: product.quantity,
+              deliverylocation: product.deliverylocation,
+              price: '-',
+              status: '-',
+              totalPrice: '-',
+            });
+          }
+        });
       });
 
       const purchaseOrderUrl = data.eventAttributesStore.find(
@@ -613,45 +690,25 @@ export class EventService {
       response.purchaseOrderUrl = purchaseOrderUrl
         ? purchaseOrderUrl.value
         : null;
-      await Promise.all(
-        productDetails.map(async (item: any) => {
-          let productComparision: any =
-            await this.prismaService.productComparisons.findMany({
-              where: {
-                productid: item.productid,
-                vendorstatus: {
-                  in: ['ACCEPTED', 'CLOSED', 'REJECTED', 'OPEN'],
-                },
-                userstatus: {
-                  in: ['ACCEPTED', 'CLOSED', 'REJECTED', 'OPEN'],
-                },
-              },
-            });
 
-          if (productComparision.length > 0) {
-            await Promise.all(
-              productComparision.map(async (data: any) => {
-                const vendorDetails =
-                  await this.prismaService.userDetails.findFirst({
-                    where: {
-                      userid: data.vendoruserid,
-                    },
-                    select: {
-                      userid: true,
-                      organisationname: true,
-                    },
-                  });
-                data.totalPrice = item.quantity * data.vendorprice;
-                data.vendorDetails = vendorDetails;
-              }),
-            );
-          }
-
-          item.productComparisions = productComparision;
-        }),
-      );
+      for (let vendorComparison of vendorComparisons) {
+        let vendor: any = vendorComparison;
+        const vendorDetails = await this.prismaService.userDetails.findFirst({
+          where: {
+            userid: BigInt(vendor.vendoruserid),
+          },
+          select: {
+            userid: true,
+            organisationname: true,
+            fullname: true,
+          },
+        });
+        vendor.vendorName = vendorDetails.fullname;
+        vendor.organisationname = vendorDetails.organisationname;
+      }
 
       response.productDetails = productDetails;
+      response.vendorComparisons = vendorComparisons;
     }
 
     return {
