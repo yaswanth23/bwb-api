@@ -724,56 +724,71 @@ export class EventService {
   async changeUserProductStatus(
     userProductStatusChangeDto: UserProductStatusChangeDto,
   ) {
-    const data = await this.prismaService.products.findFirst({
+    const data = await this.prismaService.eventAttributesStore.findFirst({
       where: {
-        productid: userProductStatusChangeDto.productId,
-        userid: userProductStatusChangeDto.userId,
-        status: 'OPEN',
+        eventid: userProductStatusChangeDto.eventId,
+        key: 'PRODUCT_IDS',
       },
     });
 
     if (data) {
-      await this.prismaService.products.update({
-        where: {
-          productid: userProductStatusChangeDto.productId,
-          userid: userProductStatusChangeDto.userId,
-        },
-        data: {
-          status: userProductStatusChangeDto.status,
-          updatedat: new Date().toISOString(),
-          updatedby: userProductStatusChangeDto.userId,
-        },
-      });
+      const productIds = JSON.parse(data.value);
+      await Promise.all(
+        productIds.map(async (id) => {
+          const products = await this.prismaService.products.findFirst({
+            where: {
+              productid: id,
+              userid: userProductStatusChangeDto.userId,
+              status: 'OPEN',
+            },
+          });
+          if (products) {
+            await this.prismaService.products.update({
+              where: {
+                productid: id,
+                userid: userProductStatusChangeDto.userId,
+              },
+              data: {
+                status: userProductStatusChangeDto.status,
+                updatedat: new Date().toISOString(),
+                updatedby: userProductStatusChangeDto.userId,
+              },
+            });
 
-      await this.prismaService.productComparisons.update({
-        where: {
-          productid_vendoruserid: {
-            vendoruserid: userProductStatusChangeDto.vendorUserId,
-            productid: userProductStatusChangeDto.productId,
-          },
-        },
-        data: {
-          status: userProductStatusChangeDto.status,
-          updatedat: new Date().toISOString(),
-          updatedby: userProductStatusChangeDto.userId,
-        },
-      });
+            await this.prismaService.productComparisons.update({
+              where: {
+                productid_vendoruserid: {
+                  vendoruserid: userProductStatusChangeDto.vendorUserId,
+                  productid: id,
+                },
+              },
+              data: {
+                status: userProductStatusChangeDto.status,
+                updatedat: new Date().toISOString(),
+                updatedby: userProductStatusChangeDto.userId,
+              },
+            });
 
-      if (userProductStatusChangeDto.status === 'ACCEPTED') {
-        await this.prismaService.productComparisons.updateMany({
-          where: {
-            vendoruserid: { not: userProductStatusChangeDto.vendorUserId },
-            productid: userProductStatusChangeDto.productId,
-          },
-          data: {
-            status: 'NOT ACCEPTED',
-            updatedat: new Date().toISOString(),
-            updatedby: userProductStatusChangeDto.userId,
-          },
-        });
-      }
+            if (userProductStatusChangeDto.status === 'ACCEPTED') {
+              await this.prismaService.productComparisons.updateMany({
+                where: {
+                  vendoruserid: {
+                    not: userProductStatusChangeDto.vendorUserId,
+                  },
+                  productid: id,
+                },
+                data: {
+                  status: 'NOT ACCEPTED',
+                  updatedat: new Date().toISOString(),
+                  updatedby: userProductStatusChangeDto.userId,
+                },
+              });
+            }
+          }
+        }),
+      );
 
-      this.generatePurchaseOrder(data.eventid);
+      this.generatePurchaseOrder(userProductStatusChangeDto.eventId);
     }
 
     return {

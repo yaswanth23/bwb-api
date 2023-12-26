@@ -153,7 +153,7 @@ export class UserProductStatusChangeDto {
 
   @ApiProperty()
   @IsNumberString()
-  productId: number;
+  eventId: number;
 
   @ApiProperty()
   @IsString()
