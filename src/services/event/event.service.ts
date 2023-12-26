@@ -647,6 +647,7 @@ export class EventService {
             const totalPrice = comparison.vendorprice * productDetail.quantity;
             acc[vendorUserIdStr].sumTotal += totalPrice;
             acc[vendorUserIdStr].productQuotes.push({
+              vendorUserId: comparison.vendoruserid,
               productid: productDetail.productid,
               product: productDetail.product,
               productvariant: productDetail.productvariant,
@@ -670,6 +671,7 @@ export class EventService {
             )
           ) {
             vendorComparison.productQuotes.push({
+              vendorUserId: vendorComparison.vendoruserid,
               productid: product.productid,
               product: product.product,
               productvariant: product.productvariant,
