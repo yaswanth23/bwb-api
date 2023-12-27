@@ -368,6 +368,12 @@ export class EventService {
 
     let response: any = data;
     if (data) {
+      const userData = await this.prismaService.userDetails.findFirst({
+        where: {
+          userid: BigInt(userId),
+        },
+      });
+
       const productIdsAttribute = data.eventAttributesStore.find(
         (attribute) => attribute.key === 'PRODUCT_IDS',
       );
@@ -381,9 +387,7 @@ export class EventService {
         (attribute) => attribute.key === 'PURCHASE_ORDER_URL',
       );
 
-      response.purchaseOrderUrl = purchaseOrderUrl
-        ? purchaseOrderUrl.value
-        : null;
+      let checkAcceptedVendor = false;
 
       await Promise.all(
         productDetails.map(async (item: any) => {
@@ -401,9 +405,30 @@ export class EventService {
               },
             });
 
+          if (
+            productComparision.length > 0 &&
+            productComparision[0].vendorstatus === 'ACCEPTED'
+          ) {
+            checkAcceptedVendor = true;
+          }
+
           item.productComparisions = productComparision;
         }),
       );
+
+      if (userData && userData.roleid === 1002) {
+        if (checkAcceptedVendor) {
+          response.purchaseOrderUrl = purchaseOrderUrl
+            ? purchaseOrderUrl.value
+            : null;
+        } else {
+          response.purchaseOrderUrl = null;
+        }
+      } else {
+        response.purchaseOrderUrl = purchaseOrderUrl
+          ? purchaseOrderUrl.value
+          : null;
+      }
 
       response.productDetails = productDetails;
     }
