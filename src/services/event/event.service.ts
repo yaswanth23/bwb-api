@@ -407,7 +407,7 @@ export class EventService {
 
           if (
             productComparision.length > 0 &&
-            productComparision[0].vendorstatus === 'ACCEPTED'
+            productComparision[0].status === 'ACCEPTED'
           ) {
             checkAcceptedVendor = true;
           }
