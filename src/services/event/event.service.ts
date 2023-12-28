@@ -177,6 +177,7 @@ export class EventService {
             product: item.product,
             productvariant: item.productVariant,
             quantity: Number(item.quantity),
+            quantitytype: item.quantityType,
             deliverylocation: item.deliveryLocation,
             status: 'OPEN',
             createdat: new Date().toISOString(),

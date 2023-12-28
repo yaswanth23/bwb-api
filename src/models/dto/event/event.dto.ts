@@ -34,6 +34,7 @@ export class ProductDetailsDto {
   product: string;
   productVariant: string;
   quantity: number;
+  quantityType: string;
   deliveryLocation: string;
 }
 

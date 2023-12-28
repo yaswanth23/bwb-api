@@ -213,4 +213,5 @@ model products {
   updatedat        DateTime? @db.Timestamp(6)
   updatedby        BigInt?
   eventid          BigInt?
+  quantitytype     String?   @db.VarChar
 }
