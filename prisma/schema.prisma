@@ -185,8 +185,8 @@ model productComparisons {
   id             BigInt    @id @default(autoincrement())
   productid      BigInt?
   vendoruserid   BigInt?
-  counterprice   Int?
-  vendorprice    Int?
+  counterprice   Float?
+  vendorprice    Float?
   vendorunittype String?   @db.VarChar
   status         String?   @db.VarChar
   createdat      DateTime? @db.Timestamp(6)
