@@ -680,6 +680,10 @@ export class EventService {
               quantity: productDetail.quantity,
               deliverylocation: productDetail.deliverylocation,
               status: productDetail.status,
+              vendorprice: comparison.vendorprice,
+              counterprice: comparison.counterprice,
+              vendorstatus: comparison.vendorstatus,
+              userstatus: comparison.userstatus,
               price: comparison.vendorprice,
               totalPrice,
             });
